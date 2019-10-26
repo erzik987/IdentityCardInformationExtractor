@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using OCR_ID_Card.Enums;
 
 namespace OCR_ID_Card.Models
 {
@@ -9,21 +10,15 @@ namespace OCR_ID_Card.Models
     {
         //First line
         public CardType CardType { get; set; }
-
-        //public Dictionary<CardType, String> CardTypes = new Dictionary<CardType, String>
-        //{
-        //    { CardType.IdCard, "ID" },
-        //    { CardType.Other, "" }
-        //};
-
-        public CardOrigin CardOrigin { get; set; }
+        public Nation CardOrigin { get; set; }
         public string CardCode { get; set; }
+        public string IdentificationNumber { get; set; }
 
         //Second line
         public DateTime DateOfBirth { get; set; }
         public Gender Gender { get; set; }
         public DateTime ExpirationDate { get; set; }
-        public Nationality Nationality { get; set; }
+        public Nation Nationality { get; set; }
 
         //Third line
         public  string Surname { get; set; }
@@ -33,32 +28,5 @@ namespace OCR_ID_Card.Models
         public Image? Photo { get; set; }
         public Image? FrontSide { get; set; }
         public Image? BackSide { get; set; }
-    }
-
-
-
-    public enum Gender
-    {
-        Man,
-        Woman,
-        Unknown
-    }
-
-    public enum CardType
-    { 
-        IdCard,
-        Other
-    }
-
-    public enum CardOrigin
-    { 
-        SK,
-        CZ
-    }
-
-    public enum Nationality
-    { 
-        SK,
-        CZ
     }
 }

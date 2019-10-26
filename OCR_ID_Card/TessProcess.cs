@@ -23,7 +23,7 @@ namespace OCR_ID_Card
         {
             try
             {
-                using (var engine = new TesseractEngine(@"./tessdata", "ces", EngineMode.Default))
+                using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
                 {
                     using (var img = Pix.LoadFromFile(dataPath))
                     {

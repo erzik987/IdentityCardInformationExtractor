@@ -12,14 +12,10 @@ namespace OCR_ID_Card
 {
     class Program
     {
-        //#region Methods
         static void Main(string[] args)
         {
-            //OCR.OCR img = new OCR.OCR("D:\\test\\download.jpeg");
-
-            //Console.WriteLine(img.TesseractProcess());
-
-            DataProcess data = new DataProcess("D:\\test\\download.jpeg");
+            DataProcess data = new DataProcess("D:\\test\\op-test.jpg");
+            data.Print();
             data.getIdentityCard();
         }
     }
