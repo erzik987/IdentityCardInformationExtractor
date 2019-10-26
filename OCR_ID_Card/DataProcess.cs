@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using OCR_ID_Card.Enums;
 
 
 namespace OCR_ID_Card
@@ -9,21 +10,43 @@ namespace OCR_ID_Card
     class DataProcess
     {
 
-        public string dataPath { get; set; }
+        private string dataPath { get; set; }
         public string Text { get; set; }
         private IdentityCard IDCard { get; set; }
+        private Dictionary<string,Nation> nations { get; set; }
+        private Dictionary<string, CardType> cardTypes { get; set; }
+        private Dictionary<string, Gender> genders { get; set; }
 
         public DataProcess(string dataPath) 
         {
             this.dataPath = dataPath;
             Text = new OCR.OCR(dataPath).TesseractProcess();
             IDCard = new IdentityCard();
+
+            nations = new Dictionary<string, Nation>()
+            {
+                {"SVK",Nation.SK},
+                {"CZE",Nation.CZ},
+            };
+
+            cardTypes = new Dictionary<string, CardType>()
+            {
+                {"ID",CardType.IdCard},
+                {"IR",CardType.AlowToStay},
+            };
+
+            genders = new Dictionary<string, Gender>()
+            {
+                {"M",Gender.Male},
+                {"F",Gender.Female},
+            };
         }
 
         private int parseLetterToIntValue(char inputValue) 
         {
             var map = new Dictionary<char, int>() 
             {
+               {'0',0 },
                {'1',1 },
                {'2',2 },
                {'3',3 },
@@ -65,7 +88,7 @@ namespace OCR_ID_Card
 
         }
 
-        private Boolean validate(string stringOnValidate,int validationValue) 
+        private Boolean validate(string stringOnValidate,int? validationValue) 
         {
             var count = 0;
             var index = 7;
@@ -102,45 +125,198 @@ namespace OCR_ID_Card
             }
         }
 
+        private DateTime parseDateTimeFormat(string stringDate) 
+        {
+            if (stringDate.Length > 6) 
+            {
+                throw new System.ArgumentException("Wrong format on parsing date", "original");
+            }
+
+            string yearAsString;
+            var deacadeOfBirth = Convert.ToInt32(stringDate[0]);
+            if (deacadeOfBirth > 3)
+            {
+                yearAsString = "19" + stringDate.Substring(0, 2);
+            }
+            else 
+            {
+                yearAsString = "20" + stringDate.Substring(0, 2);
+            }
+
+            int year = Convert.ToInt32(yearAsString);
+            int month = Convert.ToInt32(stringDate.Substring(2, 2));
+            int day = Convert.ToInt32(stringDate.Substring(4, 2));
+
+            return new DateTime(year,month,day);
+        }
+
         private void parseFirstLine(string line) 
         {
+            Boolean cardCodeExist = true;
+            Boolean identificationNumberExist = true;
+
+            var nation = "";
+            var cardType = "";
             var cardCode = "";
             var identificationNumber = "";
+
+            int? validationNumber = null;
             var blocks = line.Split("<");
             for (int j = 0; j < blocks.Length; j++)
             {
                 var block = blocks[j];
                 if (block != "")
                 {
-                    for (int k = 0; k < block.Length; k++)
+                    if (j == 0) 
                     {
-                        var letter = block[k];
-                        if (j == 0 && k > 4)
-                        {
-                            cardCode = cardCode + letter;
-                        }
+                        nation = block.Substring(2, 3);
+                        cardType = block.Substring(0, 2);
+                        cardCode = block.Substring(5);
+                    }
 
-                        if (j == 1 && k > 0) 
-                        {
-                            identificationNumber = identificationNumber + letter;
-                        }
+                    if (j == 1) 
+                    {
+                        identificationNumber = block.Substring(1);
+                        validationNumber = block[0] - '0';
                     }
                 }
             }
 
+            if (cardTypes.ContainsKey(cardType))
+            {
+                IDCard.CardType = cardTypes[cardType];
+            }
+            else
+            {
+                throw new System.ArgumentException("We couldn't load card type", "original");
+            }
 
-            IDCard.CardCode = cardCode;
-            IDCard.IdentificationNumber = identificationNumber;
-        }
+            if (nations.ContainsKey(nation))
+            {
+                IDCard.CardOrigin = nations[nation];
+            }
+            else 
+            {
+                throw new System.ArgumentException("We couldn't load card origin", "original");
+            }
 
-        private void parseSecondLine(string line) 
-        { 
+            if (cardCodeExist)
+            {
+                if (validationNumber != null)
+                {
+                    if (validate(cardCode, validationNumber))
+                    {
+                        IDCard.CardCode = cardCode;
+                    }
+                    else
+                    {
+                        throw new System.ArgumentException("The data was not load properly", "original");
+                    }
+                }
+                else 
+                {
+                    IDCard.CardCode = cardCode;
+                }
+            }
+            else 
+            {
+                throw new System.ArgumentException("We couldn't load card code", "original");
+            }
+
+            if (identificationNumberExist) 
+            { 
+                IDCard.IdentificationNumber = identificationNumber;
+            }
+            
             
         }
 
+        private void parseSecondLine(string line) 
+        {
+            string dateOFBirth = "";
+            string dateOfExpiry = "";
+            string nationality = "";
+            string gender = "";
+
+            int? validationValueForDateOfBirth = null;
+            int? validaitonValueForDateOfExpiry = null;
+            int? generalValidationValue = line[line.Length-1];
+
+            var blocks = line.Split("<");
+            for (int j = 0; j < blocks.Length; j++)
+            {
+                var block = blocks[j];
+                if (block != "")
+                {
+                    if (j == 0)
+                    {
+                        dateOFBirth = block.Substring(0, 6);
+                        dateOfExpiry = block.Substring(8, 6);
+                        gender = block.Substring(7,1);
+                        nationality = block.Substring(15, 3);
+                        validationValueForDateOfBirth = block[6] - '0';
+                        validaitonValueForDateOfExpiry = block[14] - '0';
+
+                    }
+                }
+            }
+
+            if (validate(dateOfExpiry, validaitonValueForDateOfExpiry))
+            {
+                IDCard.ExpirationDate = parseDateTimeFormat(dateOfExpiry);
+            }
+            else
+            {
+                throw new System.ArgumentException("We couldn't load date of expiration", "original");
+            }
+
+            if (validate(dateOFBirth, validationValueForDateOfBirth))
+            {
+                IDCard.DateOfBirth = parseDateTimeFormat(dateOFBirth);
+            }
+            else
+            {
+                throw new System.ArgumentException("We couldn't load date of birth", "original");
+            }
+
+            if (nations.ContainsKey(nationality))
+            {
+                IDCard.Nationality = nations[nationality];
+            }
+            else 
+            {
+                throw new System.ArgumentException("We couldn't load nationality", "original");
+            }
+
+            if (genders.ContainsKey(gender))
+            {
+                IDCard.Gender = genders[gender];
+            }
+            else 
+            {
+                throw new System.ArgumentException("We couldn't load gender", "original");
+            }
+        }
+
         private void parseThirdLine(string line) 
-        { 
-        
+        {
+            var blocks = line.Split("<");
+            for (int j = 0; j < blocks.Length; j++)
+            {
+                var block = blocks[j];
+                if (block != "")
+                {
+                    if (j == 0)
+                    {
+                        IDCard.Surname = block;
+                    }
+
+                    if (j == 2)
+                    {
+                        IDCard.Name = block;
+                    }
+                }
+            }
         }
 
         public IdentityCard getIdentityCard() 
