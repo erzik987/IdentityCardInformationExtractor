@@ -22,12 +22,19 @@ namespace OCR_ID_Card
         {
             IDCard = new IdentityCard();
 
-            if (frontPageDataPath != null)
+            try
             {
-                processFrontPage(frontPageDataPath);
-            }
+                if (frontPageDataPath != null)
+                {
+                    processFrontPage(frontPageDataPath);
+                }
 
-            processBackPage(backPageDataPath);
+                processBackPage(backPageDataPath);
+            }
+            catch (EntryPointNotFoundException ex)
+            {
+                throw ex;
+            }
 
 
             nations = new Dictionary<string, Nation>()
@@ -51,18 +58,48 @@ namespace OCR_ID_Card
 
         private void processFrontPage(string dataPath) 
         {
-            Image frontPage = Image.FromFile(dataPath);
+            if (dataPath != null)
+            {
+                Image frontPage;
 
-            IDCard.FrontSide = frontPage;
+                try
+                {
+                    frontPage = Image.FromFile(dataPath);
+
+                    IDCard.FrontSide = frontPage;
+                }
+                catch (Exception)
+                {
+                    throw new System.EntryPointNotFoundException("Path to front page of identification card wasnt found");
+                }
+            }
+            else
+            {
+                throw new System.ArgumentException("Data path wasnt defined", "original");
+            }
         }
 
         private void processBackPage(string dataPath)
         {
-            Text = new OCR.OCR(dataPath).TesseractProcess();
+            if (dataPath != null) 
+            {
+                Text = new OCR.OCR(dataPath).TesseractProcess();
+                Image frontPage;
+                try
+                {
+                    frontPage = Image.FromFile(dataPath);
+                }
+                catch (Exception)
+                {
+                    throw new System.EntryPointNotFoundException("Path to back page of identification card wasnt found");
+                }
 
-            Image frontPage = Image.FromFile(dataPath);
-
-            IDCard.FrontSide = frontPage;
+                IDCard.FrontSide = frontPage;
+            }
+            else
+            {
+                throw new System.ArgumentException("Data path wasnt defined", "original");
+            }
         }
 
         private int parseLetterToIntValue(char inputValue) 

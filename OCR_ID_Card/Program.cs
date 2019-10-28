@@ -35,20 +35,36 @@ namespace OCR_ID_Card
                 {
                     case 'R':
                     case 'r':
-                        Console.WriteLine("Enter path of BACK side your identification card:");
-                        var backSidePath = Console.ReadLine();
+
+                        string backSidePath;
+                        do
+                        {
+                            Console.WriteLine("Enter path of BACK side your identification card (required):");
+                            backSidePath = Console.ReadLine();
+                        }
+                        while (backSidePath == "");
+
                         Console.WriteLine("Enter path of FRONT side your identification card (optional):");
                         var frontSidePath = Console.ReadLine();
 
                         DataProcess data;
 
-                        if (frontSidePath == "")
+                        try
                         {
-                            data = new DataProcess(backSidePath);
+                            if (frontSidePath == "")
+                            {
+                                data = new DataProcess(backSidePath);
+                            }
+                            else
+                            {
+                                data = new DataProcess(backSidePath, frontSidePath);
+                            }
                         }
-                        else 
+                        catch (EntryPointNotFoundException ex)
                         {
-                            data = new DataProcess(backSidePath, frontSidePath);
+
+                            Console.WriteLine(ex);
+                            break;
                         }
 
                         try
@@ -67,6 +83,12 @@ namespace OCR_ID_Card
                         {
                             Console.WriteLine("There was problem while parsing data from identification card. You can check the data output:");
                             data.Print();
+                        }
+                        catch (Exception ex) 
+                        {
+                            //Console.
+                            Console.WriteLine(ex);
+                            throw;
                         }
 
                         break;
