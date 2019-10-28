@@ -25,8 +25,8 @@ namespace OCR_ID_Card.Models
         public string Name { get; set; }
 
         //Optional
-        public Image? Photo { get; set; }
-        public Image? FrontSide { get; set; }
-        public Image? BackSide { get; set; }
+        public Image Photo { get; set; }
+        public Image FrontSide { get; set; }
+        public Image BackSide { get; set; }
     }
 }

@@ -3,25 +3,32 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using OCR_ID_Card.Enums;
-
+using System.Drawing;
 
 namespace OCR_ID_Card
 {
     class DataProcess
     {
 
-        private string dataPath { get; set; }
+        //private string frontPageDataPath { get; set; }
+        //private string backPageDataPath { get; set; }
         public string Text { get; set; }
         private IdentityCard IDCard { get; set; }
         private Dictionary<string,Nation> nations { get; set; }
         private Dictionary<string, CardType> cardTypes { get; set; }
         private Dictionary<string, Gender> genders { get; set; }
 
-        public DataProcess(string dataPath) 
+        public DataProcess(string backPageDataPath, string frontPageDataPath = null) 
         {
-            this.dataPath = dataPath;
-            Text = new OCR.OCR(dataPath).TesseractProcess();
             IDCard = new IdentityCard();
+
+            if (frontPageDataPath != null)
+            {
+                processFrontPage(frontPageDataPath);
+            }
+
+            processBackPage(backPageDataPath);
+
 
             nations = new Dictionary<string, Nation>()
             {
@@ -40,6 +47,22 @@ namespace OCR_ID_Card
                 {"M",Gender.Male},
                 {"F",Gender.Female},
             };
+        }
+
+        private void processFrontPage(string dataPath) 
+        {
+            Image frontPage = Image.FromFile(dataPath);
+
+            IDCard.FrontSide = frontPage;
+        }
+
+        private void processBackPage(string dataPath)
+        {
+            Text = new OCR.OCR(dataPath).TesseractProcess();
+
+            Image frontPage = Image.FromFile(dataPath);
+
+            IDCard.FrontSide = frontPage;
         }
 
         private int parseLetterToIntValue(char inputValue) 
@@ -188,7 +211,7 @@ namespace OCR_ID_Card
             }
             else
             {
-                throw new System.ArgumentException("We couldn't load card type", "original");
+                throw new System.FormatException("We couldn't load card type");
             }
 
             if (nations.ContainsKey(nation))
@@ -197,7 +220,7 @@ namespace OCR_ID_Card
             }
             else 
             {
-                throw new System.ArgumentException("We couldn't load card origin", "original");
+                throw new System.FormatException("We couldn't load card origin");
             }
 
             if (cardCodeExist)
@@ -210,7 +233,7 @@ namespace OCR_ID_Card
                     }
                     else
                     {
-                        throw new System.ArgumentException("The data was not load properly", "original");
+                        throw new System.FormatException("The data was not load properly");
                     }
                 }
                 else 
@@ -220,7 +243,7 @@ namespace OCR_ID_Card
             }
             else 
             {
-                throw new System.ArgumentException("We couldn't load card code", "original");
+                throw new System.FormatException("We couldn't load card code");
             }
 
             if (identificationNumberExist) 
@@ -267,7 +290,7 @@ namespace OCR_ID_Card
             }
             else
             {
-                throw new System.ArgumentException("We couldn't load date of expiration", "original");
+                throw new System.FormatException("We couldn't load date of expiration");
             }
 
             if (validate(dateOFBirth, validationValueForDateOfBirth))
@@ -276,7 +299,7 @@ namespace OCR_ID_Card
             }
             else
             {
-                throw new System.ArgumentException("We couldn't load date of birth", "original");
+                throw new System.FormatException("We couldn't load date of birth");
             }
 
             if (nations.ContainsKey(nationality))
@@ -285,7 +308,7 @@ namespace OCR_ID_Card
             }
             else 
             {
-                throw new System.ArgumentException("We couldn't load nationality", "original");
+                throw new System.FormatException("We couldn't load nationality");
             }
 
             if (genders.ContainsKey(gender))
@@ -294,7 +317,7 @@ namespace OCR_ID_Card
             }
             else 
             {
-                throw new System.ArgumentException("We couldn't load gender", "original");
+                throw new System.FormatException("We couldn't load gender");
             }
         }
 
@@ -331,7 +354,7 @@ namespace OCR_ID_Card
                     lineIndex++;
                     if (line.Length != 30) 
                     { 
-                        throw new System.ArgumentException("It looks like some data missing :/", "original");
+                        throw new System.FormatException("It looks like some data missing :/");
                     }
 
                     switch (lineIndex)
@@ -346,7 +369,7 @@ namespace OCR_ID_Card
                             parseThirdLine(line);
                             break;
                         default:
-                            throw new System.ArgumentException("Nastala chyba pri spracovaní dát, skontrolujte či newm čo"); // ToDo preložiť a dokončiť
+                            throw new System.FormatException("Error occured while trying to parse identity card data"); // ToDo preložiť a dokončiť
                     }
                 }
                 
