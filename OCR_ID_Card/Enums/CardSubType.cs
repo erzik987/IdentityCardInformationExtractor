@@ -4,11 +4,9 @@ using System.Text;
 
 namespace OCR_ID_Card.Enums
 {
-    public enum Sex
+    public enum IDCardSubType
     {
-        NotKnown = 0,
-        Male = 1,
-        Female = 2,
-        NotApplicable = 9
+        ObcanskyPrukaz,
+        PovoleniKPobytu
     }
 }

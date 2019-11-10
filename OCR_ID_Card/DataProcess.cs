@@ -4,23 +4,29 @@ using System.Collections.Generic;
 using System.Text;
 using OCR_ID_Card.Enums;
 using System.Drawing;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
+using System.IO;
+using System.Xml;
+using OCR_ID_Card.Exceptions;
 
 namespace OCR_ID_Card
 {
     class DataProcess
     {
-
-        //private string frontPageDataPath { get; set; }
-        //private string backPageDataPath { get; set; }
         public string Text { get; set; }
         private IdentityCard IDCard { get; set; }
-        private Dictionary<string,Nation> nations { get; set; }
         private Dictionary<string, CardType> cardTypes { get; set; }
-        private Dictionary<string, Gender> genders { get; set; }
+        private Dictionary<string,Nation> nations { get; set; }
+        private Dictionary<string, Country> countries { get; set; }
+        private Dictionary<string, IDCardSubType> IdCardSubTypes { get; set; }
+        private Dictionary<string, Sex> genders { get; set; }
 
         public DataProcess(string backPageDataPath, string frontPageDataPath = null) 
         {
             IDCard = new IdentityCard();
+            IDCard.CardData = new CardData();
+            IDCard.PersonalData = new PersonalData();
 
             try
             {
@@ -31,11 +37,16 @@ namespace OCR_ID_Card
 
                 processBackPage(backPageDataPath);
             }
-            catch (EntryPointNotFoundException ex)
+            catch (PathToFileNotFoundException ex)
             {
                 throw ex;
             }
 
+            cardTypes = new Dictionary<string, CardType>()
+            {
+                {"I",CardType.ObcanskyPrukaz},
+                //{"R",IDCardSubType.PovoleniKPobytu},
+            };
 
             nations = new Dictionary<string, Nation>()
             {
@@ -43,16 +54,23 @@ namespace OCR_ID_Card
                 {"CZE",Nation.CZ},
             };
 
-            cardTypes = new Dictionary<string, CardType>()
+            countries = new Dictionary<string, Country>()
             {
-                {"ID",CardType.IdCard},
-                {"IR",CardType.AlowToStay},
+                {"SVK",Country.SK},
+                {"CZE",Country.CZ},
             };
 
-            genders = new Dictionary<string, Gender>()
+            IdCardSubTypes = new Dictionary<string, IDCardSubType>()
             {
-                {"M",Gender.Male},
-                {"F",Gender.Female},
+                {"D",IDCardSubType.ObcanskyPrukaz},
+                {"R",IDCardSubType.PovoleniKPobytu},
+            };
+
+            genders = new Dictionary<string, Sex>()
+            {
+                {"M",Sex.Male},
+                {"F",Sex.Female},
+                {"<",Sex.NotApplicable}
             };
         }
 
@@ -66,16 +84,16 @@ namespace OCR_ID_Card
                 {
                     frontPage = Image.FromFile(dataPath);
 
-                    IDCard.FrontSide = frontPage;
+                    IDCard.CardData.FrontSide = frontPage;
                 }
                 catch (Exception)
                 {
-                    throw new System.EntryPointNotFoundException("Path to front page of identification card wasnt found");
+                    throw new PathToFileNotFoundException(dataPath);
                 }
             }
             else
             {
-                throw new System.ArgumentException("Data path wasnt defined", "original");
+                throw new System.ArgumentNullException("Data path wasnt defined", "original");
             }
         }
 
@@ -84,21 +102,21 @@ namespace OCR_ID_Card
             if (dataPath != null) 
             {
                 Text = new OCR.OCR(dataPath).TesseractProcess();
-                Image frontPage;
+                Image backPage;
                 try
                 {
-                    frontPage = Image.FromFile(dataPath);
+                    backPage = Image.FromFile(dataPath);
                 }
                 catch (Exception)
                 {
-                    throw new System.EntryPointNotFoundException("Path to back page of identification card wasnt found");
+                    throw new PathToFileNotFoundException(dataPath);
                 }
 
-                IDCard.FrontSide = frontPage;
+                IDCard.CardData.BackSide = backPage;
             }
             else
             {
-                throw new System.ArgumentException("Data path wasnt defined", "original");
+                throw new System.ArgumentNullException("Data path wasnt defined", "original");
             }
         }
 
@@ -189,7 +207,7 @@ namespace OCR_ID_Card
         {
             if (stringDate.Length > 6) 
             {
-                throw new System.ArgumentException("Wrong format on parsing date", "original");
+                throw new System.ArgumentNullException("Wrong format on parsing date", "original");
             }
 
             string yearAsString;
@@ -216,6 +234,7 @@ namespace OCR_ID_Card
             Boolean identificationNumberExist = true;
 
             var nation = "";
+            var cardSubType = "";
             var cardType = "";
             var cardCode = "";
             var identificationNumber = "";
@@ -230,7 +249,8 @@ namespace OCR_ID_Card
                     if (j == 0) 
                     {
                         nation = block.Substring(2, 3);
-                        cardType = block.Substring(0, 2);
+                        cardSubType = block.Substring(1,1);
+                        cardType = block.Substring(0, 1);
                         cardCode = block.Substring(5);
                     }
 
@@ -244,20 +264,29 @@ namespace OCR_ID_Card
 
             if (cardTypes.ContainsKey(cardType))
             {
-                IDCard.CardType = cardTypes[cardType];
+                IDCard.CardData.CardType = cardTypes[cardType];
             }
             else
             {
-                throw new System.FormatException("We couldn't load card type");
+                throw new WrongDataFormatException("We couldn't load card type");
+            }
+
+            if (IdCardSubTypes.ContainsKey(cardSubType))
+            {
+                IDCard.CardData.IdCardSubType = IdCardSubTypes[cardSubType];
+            }
+            else
+            {
+                throw new WrongDataFormatException("We couldn't load card sub type");
             }
 
             if (nations.ContainsKey(nation))
             {
-                IDCard.CardOrigin = nations[nation];
+                IDCard.CardData.CardOrigin = nations[nation];
             }
             else 
             {
-                throw new System.FormatException("We couldn't load card origin");
+                throw new WrongDataFormatException("We couldn't load card origin");
             }
 
             if (cardCodeExist)
@@ -266,26 +295,26 @@ namespace OCR_ID_Card
                 {
                     if (validate(cardCode, validationNumber))
                     {
-                        IDCard.CardCode = cardCode;
+                        IDCard.CardData.CardCode = cardCode;
                     }
                     else
                     {
-                        throw new System.FormatException("The data was not load properly");
+                        throw new WrongDataFormatException("The data was not load properly");
                     }
                 }
                 else 
                 {
-                    IDCard.CardCode = cardCode;
+                    IDCard.CardData.CardCode = cardCode;
                 }
             }
             else 
             {
-                throw new System.FormatException("We couldn't load card code");
+                throw new WrongDataFormatException("We couldn't load card code");
             }
 
             if (identificationNumberExist) 
             { 
-                IDCard.IdentificationNumber = identificationNumber;
+                IDCard.PersonalData.IdentificationNumber = identificationNumber;
             }
             
             
@@ -323,38 +352,38 @@ namespace OCR_ID_Card
 
             if (validate(dateOfExpiry, validaitonValueForDateOfExpiry))
             {
-                IDCard.ExpirationDate = parseDateTimeFormat(dateOfExpiry);
+                IDCard.CardData.ExpirationDate = parseDateTimeFormat(dateOfExpiry);
             }
             else
             {
-                throw new System.FormatException("We couldn't load date of expiration");
+                throw new WrongDataFormatException("We couldn't load date of expiration");
             }
 
             if (validate(dateOFBirth, validationValueForDateOfBirth))
             {
-                IDCard.DateOfBirth = parseDateTimeFormat(dateOFBirth);
+                IDCard.PersonalData.DateOfBirth = parseDateTimeFormat(dateOFBirth);
             }
             else
             {
-                throw new System.FormatException("We couldn't load date of birth");
+                throw new WrongDataFormatException("We couldn't load date of birth");
             }
 
             if (nations.ContainsKey(nationality))
             {
-                IDCard.Nationality = nations[nationality];
+                IDCard.PersonalData.Nationality = nations[nationality];
             }
             else 
             {
-                throw new System.FormatException("We couldn't load nationality");
+                throw new WrongDataFormatException("We couldn't load nationality");
             }
 
             if (genders.ContainsKey(gender))
             {
-                IDCard.Gender = genders[gender];
+                IDCard.PersonalData.Sex = genders[gender];
             }
             else 
             {
-                throw new System.FormatException("We couldn't load gender");
+                throw new WrongDataFormatException("We couldn't load gender");
             }
         }
 
@@ -368,12 +397,12 @@ namespace OCR_ID_Card
                 {
                     if (j == 0)
                     {
-                        IDCard.Surname = block;
+                        IDCard.PersonalData.Surname = block;
                     }
 
                     if (j == 2)
                     {
-                        IDCard.Name = block;
+                        IDCard.PersonalData.Name = block;
                     }
                 }
             }
@@ -391,7 +420,7 @@ namespace OCR_ID_Card
                     lineIndex++;
                     if (line.Length != 30) 
                     { 
-                        throw new System.FormatException("It looks like some data missing :/");
+                        throw new WrongDataFormatException("It looks like some data missing :/");
                     }
 
                     switch (lineIndex)
@@ -406,12 +435,63 @@ namespace OCR_ID_Card
                             parseThirdLine(line);
                             break;
                         default:
-                            throw new System.FormatException("Error occured while trying to parse identity card data"); // ToDo preložiť a dokončiť
+                            throw new WrongDataFormatException("Error occured while trying to parse identity card data");
                     }
                 }
-                
             }
             return IDCard;
+        }
+
+        public dynamic getIdentityCardAsJson() 
+        {
+            var data = getIdentityCard();
+
+            var obj = new IdentityCard
+            {
+                PersonalData = new PersonalData 
+                {
+                    Name = data.PersonalData.Name,
+                    Sex = data.PersonalData.Sex,
+                    DateOfBirth = data.PersonalData.DateOfBirth,
+                    IdentificationNumber = data.PersonalData.IdentificationNumber,
+                    Nationality = data.PersonalData.Nationality,
+                    Surname = data.PersonalData.Surname
+                },
+                CardData = new CardData
+                {
+                    CardCode = data.CardData.CardCode,
+                    CardType = data.CardData.CardType,
+                    CardOrigin = data.CardData.CardOrigin,
+                    ExpirationDate = data.CardData.ExpirationDate,
+                    //Photo = data.CardData.Photo,
+                    //BackSide = data.CardData.BackSide,
+                    //FrontSide = data.CardData.FrontSide
+                }
+            };
+
+            string json = JsonConvert.SerializeObject(obj);
+
+            return json;
+        }
+
+        public dynamic getIdentityCardAsXml()
+        {
+            //var data = getIdentityCard();
+
+            XmlSerializer xsSubmit = new XmlSerializer(typeof(IdentityCard));
+            var subReq = getIdentityCard();
+            var xml = "";
+
+            using (var sww = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(sww))
+                {
+                    xsSubmit.Serialize(writer, subReq);
+                    xml = sww.ToString(); // Your XML
+                }
+            }
+
+            return xml;
         }
 
         public void Print() 

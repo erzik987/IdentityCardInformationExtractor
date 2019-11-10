@@ -6,7 +6,7 @@ namespace OCR_ID_Card.Enums
 {
     public enum CardType
     {
-        IdCard,
-        AlowToStay
+        ObcanskyPrukaz,
+        CestovniPas,
     }
 }
