@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using OCR_ID_Card.Enums;
+using IdentityCardInformationExtractor.Enums;
+using System.Drawing;
 
 
-namespace OCR_ID_Card.Models
+namespace IdentityCardInformationExtractor.Models
 {
-    class PersonalData
+    public class PersonalData
     {
         //Required
-        public string Name { get; set; }
+        public string GivenNames { get; set; }
         public string Surname { get; set; }
         public DateTime DateOfBirth { get; set; }
         public Sex Sex { get; set; }
-        public Nation Nationality { get; set; }
-        public string IdentificationNumber { get; set; }
+        public Nationality Nationality { get; set; }
+        public string PersonalNumber { get; set; }
 
         //Optional
+        public Image Photo { get; set; }
+        public Image Signature { get; set; }
+        public string  Address { get; set; }
+        public string PlaceOfBirth { get; set; }
+        public string SpecialRemarks { get; set; }
     }
 }

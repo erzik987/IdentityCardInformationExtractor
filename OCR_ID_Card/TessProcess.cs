@@ -5,21 +5,18 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using Tesseract;
+using IdentityCardInformationExtractor.Interfaces;
 
-namespace OCR_ID_Card
+namespace IdentityCardInformationExtractor
 {
-    class TessProcess
+    class TessProcess : IProcess
     {
-        private string dataPath { get; set; }
         public float MeanConfidence { get; set; }
         public string Text { get; set; }
 
-        public TessProcess(string dataPath) 
-        {
-            this.dataPath = dataPath;
-        }
+        public TessProcess() {}
 
-        public string Process() 
+        public string Process(string dataPath,string userName = null,string password = null) 
         {
             try
             {

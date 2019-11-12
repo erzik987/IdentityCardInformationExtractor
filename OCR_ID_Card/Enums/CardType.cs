@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OCR_ID_Card.Enums
+namespace IdentityCardInformationExtractor.Enums
 {
     public enum CardType
     {
-        ObcanskyPrukaz,
-        CestovniPas,
+        Passport = 'P',
+        Visa = 'V',
+        IdentityCard = 'I'
     }
 }

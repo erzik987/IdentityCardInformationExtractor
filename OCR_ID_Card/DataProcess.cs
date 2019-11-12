@@ -1,32 +1,30 @@
-﻿using OCR_ID_Card.Models;
+﻿using IdentityCardInformationExtractor.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using OCR_ID_Card.Enums;
+using IdentityCardInformationExtractor.Enums;
 using System.Drawing;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
-using OCR_ID_Card.Exceptions;
+using IdentityCardInformationExtractor.Exceptions;
 
-namespace OCR_ID_Card
+namespace IdentityCardInformationExtractor
 {
     class DataProcess
     {
         public string Text { get; set; }
         private IdentityCard IDCard { get; set; }
-        private Dictionary<string, CardType> cardTypes { get; set; }
-        private Dictionary<string,Nation> nations { get; set; }
+        //private Dictionary<string, CardType> cardTypes { get; set; }
+        private Dictionary<string,Nationality> nations { get; set; }
         private Dictionary<string, Country> countries { get; set; }
-        private Dictionary<string, IDCardSubType> IdCardSubTypes { get; set; }
+        //private Dictionary<string, CardSubType> IdCardSubTypes { get; set; }
         private Dictionary<string, Sex> genders { get; set; }
 
         public DataProcess(string backPageDataPath, string frontPageDataPath = null) 
         {
             IDCard = new IdentityCard();
-            IDCard.CardData = new CardData();
-            IDCard.PersonalData = new PersonalData();
 
             try
             {
@@ -42,16 +40,16 @@ namespace OCR_ID_Card
                 throw ex;
             }
 
-            cardTypes = new Dictionary<string, CardType>()
-            {
-                {"I",CardType.ObcanskyPrukaz},
-                //{"R",IDCardSubType.PovoleniKPobytu},
-            };
+            //cardTypes = new Dictionary<string, CardType>()
+            //{
+            //    {"I",CardType.ObcanskyPrukaz},
+            //    //{"R",IDCardSubType.PovoleniKPobytu},
+            //};
 
-            nations = new Dictionary<string, Nation>()
+            nations = new Dictionary<string, Nationality>()
             {
-                {"SVK",Nation.SK},
-                {"CZE",Nation.CZ},
+                {"SVK",Nationality.Slovakia},
+                {"CZE",Nationality.CzechRepublic},
             };
 
             countries = new Dictionary<string, Country>()
@@ -60,11 +58,11 @@ namespace OCR_ID_Card
                 {"CZE",Country.CZ},
             };
 
-            IdCardSubTypes = new Dictionary<string, IDCardSubType>()
-            {
-                {"D",IDCardSubType.ObcanskyPrukaz},
-                {"R",IDCardSubType.PovoleniKPobytu},
-            };
+            //IdCardSubTypes = new Dictionary<string, CardSubType>()
+            //{
+            //    {"D",CardSubType.ObcanskyPrukaz},
+            //    {"R",CardSubType.PovoleniKPobytu},
+            //};
 
             genders = new Dictionary<string, Sex>()
             {
@@ -101,7 +99,7 @@ namespace OCR_ID_Card
         {
             if (dataPath != null) 
             {
-                Text = new OCR.OCR(dataPath).TesseractProcess();
+                Text = new OCR.OCR().TesseractProcess(dataPath);
                 Image backPage;
                 try
                 {
@@ -212,7 +210,7 @@ namespace OCR_ID_Card
 
             string yearAsString;
             var deacadeOfBirth = Convert.ToInt32(stringDate[0]);
-            if (deacadeOfBirth > 3)
+            if (deacadeOfBirth > 51)
             {
                 yearAsString = "19" + stringDate.Substring(0, 2);
             }
@@ -233,7 +231,7 @@ namespace OCR_ID_Card
             Boolean cardCodeExist = true;
             Boolean identificationNumberExist = true;
 
-            var nation = "";
+            var country = "";
             var cardSubType = "";
             var cardType = "";
             var cardCode = "";
@@ -248,7 +246,7 @@ namespace OCR_ID_Card
                 {
                     if (j == 0) 
                     {
-                        nation = block.Substring(2, 3);
+                        country = block.Substring(2, 3);
                         cardSubType = block.Substring(1,1);
                         cardType = block.Substring(0, 1);
                         cardCode = block.Substring(5);
@@ -262,27 +260,29 @@ namespace OCR_ID_Card
                 }
             }
 
-            if (cardTypes.ContainsKey(cardType))
+            //var cardTypeExist = Enum.IsDefined(typeof(CardType), cardType[0]);
+            if (true)
             {
-                IDCard.CardData.CardType = cardTypes[cardType];
+                IDCard.CardData.CardType = (CardType)cardType[0];
             }
             else
             {
                 throw new WrongDataFormatException("We couldn't load card type");
-            }
+            }            
 
-            if (IdCardSubTypes.ContainsKey(cardSubType))
+            //var cardSubTypeExist = Enum.IsDefined(typeof(CardSubType), cardSubType[0]);
+            if (true)
             {
-                IDCard.CardData.IdCardSubType = IdCardSubTypes[cardSubType];
+                IDCard.CardData.CardSubType = (CardSubType)cardSubType[0];
             }
             else
             {
                 throw new WrongDataFormatException("We couldn't load card sub type");
             }
 
-            if (nations.ContainsKey(nation))
+            if (countries.ContainsKey(country))
             {
-                IDCard.CardData.CardOrigin = nations[nation];
+                IDCard.CardData.CardOrigin = countries[country];
             }
             else 
             {
@@ -314,7 +314,7 @@ namespace OCR_ID_Card
 
             if (identificationNumberExist) 
             { 
-                IDCard.PersonalData.IdentificationNumber = identificationNumber;
+                IDCard.PersonalData.PersonalNumber = identificationNumber;
             }
             
             
@@ -324,7 +324,7 @@ namespace OCR_ID_Card
         {
             string dateOFBirth = "";
             string dateOfExpiry = "";
-            string nationality = "";
+            string country = "";
             string gender = "";
 
             int? validationValueForDateOfBirth = null;
@@ -342,7 +342,7 @@ namespace OCR_ID_Card
                         dateOFBirth = block.Substring(0, 6);
                         dateOfExpiry = block.Substring(8, 6);
                         gender = block.Substring(7,1);
-                        nationality = block.Substring(15, 3);
+                        country = block.Substring(15, 3);
                         validationValueForDateOfBirth = block[6] - '0';
                         validaitonValueForDateOfExpiry = block[14] - '0';
 
@@ -352,7 +352,7 @@ namespace OCR_ID_Card
 
             if (validate(dateOfExpiry, validaitonValueForDateOfExpiry))
             {
-                IDCard.CardData.ExpirationDate = parseDateTimeFormat(dateOfExpiry);
+                IDCard.CardData.DateOfExpiry = parseDateTimeFormat(dateOfExpiry);
             }
             else
             {
@@ -368,9 +368,9 @@ namespace OCR_ID_Card
                 throw new WrongDataFormatException("We couldn't load date of birth");
             }
 
-            if (nations.ContainsKey(nationality))
+            if (nations.ContainsKey(country))
             {
-                IDCard.PersonalData.Nationality = nations[nationality];
+                IDCard.PersonalData.Nationality = nations[country];
             }
             else 
             {
@@ -402,7 +402,7 @@ namespace OCR_ID_Card
 
                     if (j == 2)
                     {
-                        IDCard.PersonalData.Name = block;
+                        IDCard.PersonalData.GivenNames = block;
                     }
                 }
             }
@@ -440,58 +440,6 @@ namespace OCR_ID_Card
                 }
             }
             return IDCard;
-        }
-
-        public dynamic getIdentityCardAsJson() 
-        {
-            var data = getIdentityCard();
-
-            var obj = new IdentityCard
-            {
-                PersonalData = new PersonalData 
-                {
-                    Name = data.PersonalData.Name,
-                    Sex = data.PersonalData.Sex,
-                    DateOfBirth = data.PersonalData.DateOfBirth,
-                    IdentificationNumber = data.PersonalData.IdentificationNumber,
-                    Nationality = data.PersonalData.Nationality,
-                    Surname = data.PersonalData.Surname
-                },
-                CardData = new CardData
-                {
-                    CardCode = data.CardData.CardCode,
-                    CardType = data.CardData.CardType,
-                    CardOrigin = data.CardData.CardOrigin,
-                    ExpirationDate = data.CardData.ExpirationDate,
-                    //Photo = data.CardData.Photo,
-                    //BackSide = data.CardData.BackSide,
-                    //FrontSide = data.CardData.FrontSide
-                }
-            };
-
-            string json = JsonConvert.SerializeObject(obj);
-
-            return json;
-        }
-
-        public dynamic getIdentityCardAsXml()
-        {
-            //var data = getIdentityCard();
-
-            XmlSerializer xsSubmit = new XmlSerializer(typeof(IdentityCard));
-            var subReq = getIdentityCard();
-            var xml = "";
-
-            using (var sww = new StringWriter())
-            {
-                using (XmlWriter writer = XmlWriter.Create(sww))
-                {
-                    xsSubmit.Serialize(writer, subReq);
-                    xml = sww.ToString(); // Your XML
-                }
-            }
-
-            return xml;
         }
 
         public void Print() 

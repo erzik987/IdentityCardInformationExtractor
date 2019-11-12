@@ -1,4 +1,4 @@
-﻿using OCR_ID_Card.Models;
+﻿using IdentityCardInformationExtractor.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,20 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Tesseract;
 
-namespace OCR_ID_Card.OCR
+namespace IdentityCardInformationExtractor.OCR
 {
     public class OCR
     {
-        private string dataPath { get; set; }
+        public OCR(){}
 
-        public OCR(string dataPath)
+        public string TesseractProcess(string dataPath) 
         {
-            this.dataPath = dataPath;
-        }
-
-        public string TesseractProcess() 
-        {
-            return new TessProcess(dataPath).Process();
+            return new TessProcess().Process(dataPath);
         }
     }
 }

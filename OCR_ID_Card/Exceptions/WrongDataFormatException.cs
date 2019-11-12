@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OCR_ID_Card.Exceptions
+namespace IdentityCardInformationExtractor.Exceptions
 {
     [Serializable]
     class WrongDataFormatException : Exception

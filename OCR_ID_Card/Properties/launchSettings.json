@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IdentityCardInformationExtractor": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\\\test\\\\op_front_page.jpg D:\\\\test\\\\op-test.jpg OP XML"
+    }
+  }
+}
