@@ -4,6 +4,15 @@ using System.Text;
 
 namespace IdentityCardInformationExtractor.Enums
 {
+
+    /// <summary>
+    /// https://gist.github.com/zspine/2365808
+    /// </summary>
+
+    /// <summary>
+    ///https://en.wikipedia.org/wiki/ISO_3166-1
+    /// </summary>
+    /// 
     public enum Nationality
     {
         Andorra = 53,

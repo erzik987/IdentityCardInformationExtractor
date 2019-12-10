@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using Tesseract;
 using IdentityCardInformationExtractor.Interfaces;
 
