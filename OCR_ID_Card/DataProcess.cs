@@ -16,10 +16,8 @@ namespace IdentityCardInformationExtractor
     {
         public string Text { get; set; }
         private IdentityCard IDCard { get; set; }
-        //private Dictionary<string, CardType> cardTypes { get; set; }
         private Dictionary<string,Nationality> nations { get; set; }
         private Dictionary<string, Country> countries { get; set; }
-        //private Dictionary<string, CardSubType> IdCardSubTypes { get; set; }
         private Dictionary<string, Sex> genders { get; set; }
 
         public DataProcess(string backPageDataPath, string frontPageDataPath = null) 
@@ -40,12 +38,6 @@ namespace IdentityCardInformationExtractor
                 throw ex;
             }
 
-            //cardTypes = new Dictionary<string, CardType>()
-            //{
-            //    {"I",CardType.ObcanskyPrukaz},
-            //    //{"R",IDCardSubType.PovoleniKPobytu},
-            //};
-
             nations = new Dictionary<string, Nationality>()
             {
                 {"SVK",Nationality.Slovakia},
@@ -57,12 +49,6 @@ namespace IdentityCardInformationExtractor
                 {"SVK",Country.SK},
                 {"CZE",Country.CZ},
             };
-
-            //IdCardSubTypes = new Dictionary<string, CardSubType>()
-            //{
-            //    {"D",CardSubType.ObcanskyPrukaz},
-            //    {"R",CardSubType.PovoleniKPobytu},
-            //};
 
             genders = new Dictionary<string, Sex>()
             {
@@ -444,7 +430,9 @@ namespace IdentityCardInformationExtractor
 
         public void Print() 
         {
+            Console.WriteLine();
             Console.WriteLine(Text);
+            Console.WriteLine();
         }
 
 

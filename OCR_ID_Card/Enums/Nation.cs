@@ -4,12 +4,6 @@ using System.Text;
 
 namespace IdentityCardInformationExtractor.Enums
 {
-    //public enum Nation
-    //{
-    //    SK,
-    //    CZ
-    //}
-
     public enum Nationality
     {
         Andorra = 53,

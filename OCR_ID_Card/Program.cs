@@ -16,11 +16,8 @@ namespace IdentityCardInformationExtractor
         static void Main(string[] args)
         {
 
-            //    "D:\\test\\download.jpeg"
-            //    "D:\\test\\op-test.jpg"
-            //    "D:\\test\\op_front_page.jpg"
+            //    "D:\\test\\HQ_TEST_OP.jpeg"
 
-            //    D:\\test\\op_front_page.jpg D:\\test\\op-test.jpg OP JSON
 
             if (args.Length == 1)
             {
@@ -32,7 +29,8 @@ namespace IdentityCardInformationExtractor
                     while (true)
                     {
                         Console.WriteLine("Choose action:");
-                        Console.WriteLine("R) read data from PC");
+                        Console.WriteLine("R) read data from PC and print from model");
+                        Console.WriteLine("P) read data from PC print raw version on console");
 
                         char foo = Console.ReadKey().KeyChar;
                         Console.WriteLine();
@@ -97,6 +95,29 @@ namespace IdentityCardInformationExtractor
                                     throw;
                                 }
 
+                                break;
+
+                            case 'P':
+                            case 'p':
+                                string imgData;
+                                do
+                                {
+                                    Console.WriteLine("Enter picture on data process (required):");
+                                    imgData = Console.ReadLine();
+                                }
+                                while (imgData == "");
+
+                                try
+                                {
+                                    data = new DataProcess(imgData);
+                                    data.Print();
+                                }
+                                catch (PathToFileNotFoundException ex)
+                                {
+
+                                    Console.WriteLine(ex);
+                                    break;
+                                }
                                 break;
                             default:
                                 Console.WriteLine("On this key is not registered any action");
