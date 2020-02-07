@@ -1,2 +1,14 @@
 # IdentityCardInformationExtractor
-todo description
+
+
+## Supervisor
+
+* **Tomáš Caha**
+
+## Authors
+
+* **Erik Hudcovský** - *Initial work* - [PurpleBooth](https://github.com/erzik987)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
