@@ -155,6 +155,11 @@ namespace IdentityCardInformationExtractor
                     case "OP":
                         Console.WriteLine(chooseOutput(format,data));
                         break;
+
+                    case "CP":
+                        Console.WriteLine(chooseOutput(format, data));
+                        break;
+
                     default:
                         Console.WriteLine("Card type was not recognized");
                         break;
