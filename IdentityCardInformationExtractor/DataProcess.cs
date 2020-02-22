@@ -4,7 +4,6 @@ using System.Drawing;
 using IdentityCardInformationExtractor.Exceptions;
 using IdentityCardInformationExtractor.PapersOnProcess;
 using IdentityCardInformationExtractor.Enums;
-using IdentityCardInformationExtractor.ImplementedInterfaces;
 
 namespace IdentityCardInformationExtractor
 {
@@ -92,9 +91,6 @@ namespace IdentityCardInformationExtractor
                 {
                     case Ocr.Tesseract:
                         Text = new TessProcess().Process(dataPath);
-                        break;
-                    case Ocr.IronOcr:
-                        Text = new IronProcess().Process(dataPath);
                         break;
                     default: throw new ArgumentOutOfRangeException();
                 }

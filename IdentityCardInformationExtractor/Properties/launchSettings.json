@@ -2,7 +2,7 @@
   "profiles": {
     "IdentityCardInformationExtractor": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\test\\OP_CR_prednaStrana.jpg D:\\test\\CP_CR_prednaStrana.jpg CP JSON"
+      "commandLineArgs": "D:\\test\\OP_CR_prednaStrana.jpg D:\\test\\OP_CR_zadnaStrana.jpg OP JSON"
     }
   }
 }
