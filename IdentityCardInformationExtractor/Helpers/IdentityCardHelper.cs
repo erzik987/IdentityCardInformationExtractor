@@ -1,45 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using IdentityCardInformationExtractor.Enums;
-using System.Drawing;
-using Newtonsoft.Json;
-using System.Xml.Serialization;
-using System.IO;
-using System.Xml;
-using IdentityCardInformationExtractor.Exceptions;
 
-namespace IdentityCardInformationExtractor.PapersOnProcess.BaseFunctions
+
+namespace IdentityCardInformationExtractor.Helpers
 {
-    public class BaseFunctionsForProcess
+    public static class IdentityCardHelper
     {
+        public static Dictionary<string, Nationality> nations = new Dictionary<string, Nationality>()
+        {
+            {"SVK",Nationality.Slovakia},
+            {"CZE",Nationality.CzechRepublic},
+        };
 
-        protected Dictionary<string, Nationality> nations { get; set; }
-        protected Dictionary<string, Country> countries { get; set; }
-        protected Dictionary<string, Sex> genders { get; set; }
+        public static Dictionary<string, Country> countries = new Dictionary<string, Country>() {
+            {"SVK",Country.SK},
+            {"CZE",Country.CZ},
+        };
 
-        public BaseFunctionsForProcess() {
+        public static Dictionary<string, Sex> genders = new Dictionary<string, Sex>()
+        {
+            {"M",Sex.Male},
+            {"F",Sex.Female},
+            {"<",Sex.NotApplicable}
+        };
 
-            nations = new Dictionary<string, Nationality>()
-            {
-                {"SVK",Nationality.Slovakia},
-                {"CZE",Nationality.CzechRepublic},
-            };
-
-            countries = new Dictionary<string, Country>()
-            {
-                {"SVK",Country.SK},
-                {"CZE",Country.CZ},
-            };
-
-            genders = new Dictionary<string, Sex>()
-            {
-                {"M",Sex.Male},
-                {"F",Sex.Female},
-                {"<",Sex.NotApplicable}
-            };
-        }
-
-        protected int parseLetterToIntValue(char inputValue)
+        public static int parseLetterToIntValue(char inputValue)
         {
             var map = new Dictionary<char, int>()
             {
@@ -85,7 +72,7 @@ namespace IdentityCardInformationExtractor.PapersOnProcess.BaseFunctions
 
         }
 
-        protected Boolean validate(string stringOnValidate, int? validationValue)
+        public static Boolean validate(string stringOnValidate, int? validationValue)
         {
             var count = 0;
             var index = 7;
@@ -122,7 +109,7 @@ namespace IdentityCardInformationExtractor.PapersOnProcess.BaseFunctions
             }
         }
 
-        protected DateTime parseDateTimeFormat(string stringDate)
+        public static DateTime parseDateTimeFormat(string stringDate)
         {
             if (stringDate.Length > 6)
             {

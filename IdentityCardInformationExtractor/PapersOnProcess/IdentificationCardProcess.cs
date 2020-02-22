@@ -2,11 +2,11 @@
 using IdentityCardInformationExtractor.Enums;
 using IdentityCardInformationExtractor.Exceptions;
 using IdentityCardInformationExtractor.Models;
-using IdentityCardInformationExtractor.PapersOnProcess.BaseFunctions;
+using IdentityCardInformationExtractor.Helpers;
 
 namespace IdentityCardInformationExtractor.PapersOnProcess
 {
-    class IdentificationCardProcess : BaseFunctionsForProcess
+    class IdentificationCardProcess
     {
 
         public IdentityCard IDCard;
@@ -71,9 +71,9 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                 throw new WrongDataFormatException("We couldn't load card sub type");
             }
 
-            if (countries.ContainsKey(country))
+            if (IdentityCardHelper.countries.ContainsKey(country))
             {
-                IDCard.CardData.CardOrigin = countries[country];
+                IDCard.CardData.CardOrigin = IdentityCardHelper.countries[country];
             }
             else
             {
@@ -84,7 +84,7 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
             {
                 if (validationNumber != null)
                 {
-                    if (validate(cardCode, validationNumber))
+                    if (IdentityCardHelper.validate(cardCode, validationNumber))
                     {
                         IDCard.CardData.CardCode = cardCode;
                     }
@@ -141,36 +141,36 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                 }
             }
 
-            if (validate(dateOfExpiry, validaitonValueForDateOfExpiry))
+            if (IdentityCardHelper.validate(dateOfExpiry, validaitonValueForDateOfExpiry))
             {
-                IDCard.CardData.DateOfExpiry = parseDateTimeFormat(dateOfExpiry);
+                IDCard.CardData.DateOfExpiry = IdentityCardHelper.parseDateTimeFormat(dateOfExpiry);
             }
             else
             {
                 throw new WrongDataFormatException("We couldn't load date of expiration");
             }
 
-            if (validate(dateOFBirth, validationValueForDateOfBirth))
+            if (IdentityCardHelper.validate(dateOFBirth, validationValueForDateOfBirth))
             {
-                IDCard.PersonalData.DateOfBirth = parseDateTimeFormat(dateOFBirth);
+                IDCard.PersonalData.DateOfBirth = IdentityCardHelper.parseDateTimeFormat(dateOFBirth);
             }
             else
             {
                 throw new WrongDataFormatException("We couldn't load date of birth");
             }
 
-            if (nations.ContainsKey(country))
+            if (IdentityCardHelper.nations.ContainsKey(country))
             {
-                IDCard.PersonalData.Nationality = nations[country];
+                IDCard.PersonalData.Nationality = IdentityCardHelper.nations[country];
             }
             else
             {
                 throw new WrongDataFormatException("We couldn't load nationality");
             }
 
-            if (genders.ContainsKey(gender))
+            if (IdentityCardHelper.genders.ContainsKey(gender))
             {
-                IDCard.PersonalData.Sex = genders[gender];
+                IDCard.PersonalData.Sex = IdentityCardHelper.genders[gender];
             }
             else
             {

@@ -1,15 +1,10 @@
 ﻿using IdentityCardInformationExtractor.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using IdentityCardInformationExtractor.Enums;
 using System.Drawing;
-using Newtonsoft.Json;
-using System.Xml.Serialization;
-using System.IO;
-using System.Xml;
 using IdentityCardInformationExtractor.Exceptions;
 using IdentityCardInformationExtractor.PapersOnProcess;
+using IdentityCardInformationExtractor.Enums;
+using IdentityCardInformationExtractor.ImplementedInterfaces;
 
 namespace IdentityCardInformationExtractor
 {
@@ -19,9 +14,13 @@ namespace IdentityCardInformationExtractor
         private IdentityCard IDCard { get; set; }
         private IdentificationCardProcess identificationCardProcess { get; set; }
         public PassportProcess passportProcess { get; set; }
+        private Ocr usedOcr { get; set; }
+        private CardType cardType { get; set; }
 
-        public DataProcess(string backPageDataPath, string frontPageDataPath = null) 
+        public DataProcess(Ocr usedOcr, CardType cardType, string backPageDataPath, string frontPageDataPath = null) 
         {
+            this.usedOcr = usedOcr;
+            this.cardType = cardType;
             IDCard = new IdentityCard();
 
             try
@@ -39,12 +38,26 @@ namespace IdentityCardInformationExtractor
             }
 
             identificationCardProcess = new IdentificationCardProcess(IDCard,Text);
-            passportProcess = new PassportProcess();
+            passportProcess = new PassportProcess(IDCard, Text);
         }
 
         public IdentityCard getIdentityCard() 
         {
-            return identificationCardProcess.getIdentityCard();
+            var identityCard = new IdentityCard();
+            switch (cardType)
+            {
+                case CardType.IdentityCard:
+                    identityCard = identificationCardProcess.getIdentityCard();
+                    break;
+
+                case CardType.Passport:
+                    identityCard = passportProcess.getIdentityCard();
+                    break;
+
+                default: throw new ArgumentOutOfRangeException();
+            }
+
+            return identityCard;
         }
 
         private void processFrontPage(string dataPath) 
@@ -74,7 +87,18 @@ namespace IdentityCardInformationExtractor
         {
             if (dataPath != null) 
             {
-                Text = new OCR.OCR().TesseractProcess(dataPath);
+                
+                switch (usedOcr)
+                {
+                    case Ocr.Tesseract:
+                        Text = new TessProcess().Process(dataPath);
+                        break;
+                    case Ocr.IronOcr:
+                        Text = new IronProcess().Process(dataPath);
+                        break;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+
                 Image backPage;
                 try
                 {

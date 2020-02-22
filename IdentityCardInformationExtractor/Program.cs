@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IdentityCardInformationExtractor.Models;
+using IdentityCardInformationExtractor.Enums;
 
 namespace IdentityCardInformationExtractor
 {
@@ -57,11 +58,11 @@ namespace IdentityCardInformationExtractor
                                 {
                                     if (frontSidePath == "")
                                     {
-                                        data = new DataProcess(backSidePath);
+                                       data = new DataProcess(Ocr.Tesseract, CardType.IdentityCard,backSidePath);
                                     }
                                     else
                                     {
-                                        data = new DataProcess(backSidePath, frontSidePath);
+                                       data = new DataProcess(Ocr.Tesseract, CardType.IdentityCard,backSidePath, frontSidePath);
                                     }
                                 }
                                 catch (PathToFileNotFoundException ex)
@@ -109,7 +110,7 @@ namespace IdentityCardInformationExtractor
 
                                 try
                                 {
-                                    data = new DataProcess(imgData);
+                                    data = new DataProcess(Ocr.Tesseract, CardType.IdentityCard, imgData);
                                     data.Print();
                                 }
                                 catch (PathToFileNotFoundException ex)
@@ -137,10 +138,26 @@ namespace IdentityCardInformationExtractor
                 var format = args[3];
 
                 DataProcess data;
-                
+
                 try
                 {
-                    data = new DataProcess(backSidePath, frontSidePath);
+                    switch (cardType)
+                    {
+                        case "OP":
+                            data = new DataProcess(Ocr.IronOcr, CardType.IdentityCard, backSidePath, frontSidePath);
+                            data.Print();
+                            //Console.WriteLine(chooseOutput(format, data));
+                            break;
+
+                        case "CP":
+                            data = new DataProcess(Ocr.Tesseract, CardType.Passport, backSidePath, frontSidePath);
+                            Console.WriteLine(chooseOutput(format, data));
+                            break;
+
+                        default:
+                            Console.WriteLine("Card type was not recognized");
+                            break;
+                    }
                 }
                 catch (PathToFileNotFoundException ex)
                 {
@@ -150,20 +167,7 @@ namespace IdentityCardInformationExtractor
                     throw;
                 }
 
-                switch (cardType)
-                {
-                    case "OP":
-                        Console.WriteLine(chooseOutput(format,data));
-                        break;
-
-                    case "CP":
-                        Console.WriteLine(chooseOutput(format, data));
-                        break;
-
-                    default:
-                        Console.WriteLine("Card type was not recognized");
-                        break;
-                }
+               
 
                 Console.ReadKey();
                 
