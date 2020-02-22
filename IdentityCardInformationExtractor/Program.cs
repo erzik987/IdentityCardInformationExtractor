@@ -16,7 +16,6 @@ namespace IdentityCardInformationExtractor
     {
         static void Main(string[] args)
         {
-
             //    "D:\\test\\HQ_TEST_OP.jpeg"
 
 
@@ -144,13 +143,13 @@ namespace IdentityCardInformationExtractor
                     switch (cardType)
                     {
                         case "OP":
-                            data = new DataProcess(Ocr.IronOcr, CardType.IdentityCard, backSidePath, frontSidePath);
+                            data = new DataProcess(Ocr.Tesseract, CardType.IdentityCard, backSidePath, frontSidePath);
                             data.Print();
                             //Console.WriteLine(chooseOutput(format, data));
                             break;
 
                         case "CP":
-                            data = new DataProcess(Ocr.Tesseract, CardType.Passport, backSidePath, frontSidePath);
+                            data = new DataProcess(Ocr.Tesseract, CardType.Passport, backSidePath);
                             Console.WriteLine(chooseOutput(format, data));
                             break;
 

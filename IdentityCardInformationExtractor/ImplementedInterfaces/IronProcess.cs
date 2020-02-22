@@ -1,8 +1,9 @@
 ﻿using IdentityCardInformationExtractor.Interfaces;
-using IronOcr;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using asprise_ocr_api;
+using Google.Cloud.Vision.V1;
 
 namespace IdentityCardInformationExtractor.ImplementedInterfaces
 {
@@ -14,29 +15,21 @@ namespace IdentityCardInformationExtractor.ImplementedInterfaces
         {
             try
             {
-                //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                //var Ocr = new IronOcr.AdvancedOcr()
-                //{
-                //    CleanBackgroundNoise = true,
-                //    EnhanceContrast = true,
-                //    EnhanceResolution = true,
-                //    Language = IronOcr.Languages.MultiLanguage.OcrLanguagePack, //IronOcr.Languages.English.OcrLanguagePack,
-                //    Strategy = IronOcr.AdvancedOcr.OcrStrategy.Advanced,
-                //    ColorSpace = AdvancedOcr.OcrColorSpace.Color,
-                //    DetectWhiteTextOnDarkBackgrounds = true,
-                //    InputImageType = AdvancedOcr.InputTypes.AutoDetect,
-                //    RotateAndStraighten = true,
-                //    ReadBarCodes = true,
-                //    ColorDepth = 4
-                //};
+                var client = ImageAnnotatorClient.Create();
+                var image = Google.Cloud.Vision.V1.Image.FromFile("D:\\test\\OP_CR_zadnaStrana.jpg");
+                var response = client.DetectText(image);
 
-                //var testDocument = @"C:\path\to\scan.pdf";
-                // var Results = Ocr.Read(testDocument);
 
-                AutoOcr OCR = new AutoOcr() { ReadBarCodes = false };
-                var Results = OCR.Read(dataPath);
 
-                return Results.Text;
+
+                AspriseOCR.SetUp();
+                AspriseOCR ocr = new AspriseOCR();
+                ocr.StartEngine("eng", AspriseOCR.SPEED_FASTEST);
+                string file = dataPath;
+                string s = ocr.Recognize("D:\\test\\OP_CR_zadnaStrana.jpg", -1, -1, -1, -1, -1, AspriseOCR.RECOGNIZE_TYPE_ALL, AspriseOCR.OUTPUT_FORMAT_PLAINTEXT);
+                ocr.StopEngine();
+
+                return s;
             }
             catch (Exception e)
             {
