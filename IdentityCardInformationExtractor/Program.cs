@@ -142,13 +142,13 @@ namespace IdentityCardInformationExtractor
                 {
                     switch (cardType)
                     {
-                        case "OP":
+                        case "IC":
                             data = new DataProcess(Ocr.Tesseract, CardType.IdentityCard, backSidePath, frontSidePath);
                             data.Print();
                             //Console.WriteLine(chooseOutput(format, data));
                             break;
 
-                        case "CP":
+                        case "P":
                             data = new DataProcess(Ocr.Tesseract, CardType.Passport, backSidePath);
                             Console.WriteLine(chooseOutput(format, data));
                             break;
@@ -190,8 +190,8 @@ namespace IdentityCardInformationExtractor
                     output = identityCard.ToXml();
                     break;
                 default:
-                    Console.WriteLine("Format was not recognized");
-                    return "";
+                    identityCard = data.getIdentityCard();
+                    output = identityCard.ToJson();
             }
 
             return output;

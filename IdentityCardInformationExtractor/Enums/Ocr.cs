@@ -6,7 +6,6 @@ namespace IdentityCardInformationExtractor.Enums
 {
     public enum Ocr
     {
-        Tesseract = 0,
-        IronOcr = 1,
+        Tesseract
     }
 }

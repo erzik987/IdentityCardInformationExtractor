@@ -72,7 +72,7 @@ namespace IdentityCardInformationExtractor.Helpers
 
         }
 
-        public static Boolean validate(string stringOnValidate, int? validationValue)
+        public static bool validate(string stringOnValidate, int? validationValue)
         {
             var count = 0;
             var index = 7;
@@ -98,15 +98,7 @@ namespace IdentityCardInformationExtractor.Helpers
                 }
             }
 
-            //(count % 10 == validationValue) ? return true : return false;
-            if (count % 10 == validationValue)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return count % 10 == validationValue;
         }
 
         public static DateTime parseDateTimeFormat(string stringDate)
