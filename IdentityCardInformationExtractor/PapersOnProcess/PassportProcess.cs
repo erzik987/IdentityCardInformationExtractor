@@ -20,7 +20,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
         }
 
         private void parseFirstLine(string line) {
-            string cardSubType = "";
             string nationality = "";
 
             var blocks = line.Split("<");
@@ -29,11 +28,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                 var block = blocks[j];
                 if (block != "")
                 {
-                    if (j == 0)
-                    {
-                        cardSubType = block;
-                    }
-
                     if (j == 1)
                     {
                         IDCard.PersonalData.GivenNames = block.Substring(3);
@@ -47,15 +41,9 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                 }
             }
 
-            //var cardSubTypeExist = Enum.IsDefined(typeof(CardSubType), cardSubType[0]);
-            if (true)
-            {
-                IDCard.CardData.CardType = (CardType)cardSubType[0];
-            }
-            else
-            {
-                throw new WrongDataFormatException("We couldn't load card sub type");
-            }
+
+            IDCard.CardData.CardType = Enums.CardType.Passport;
+            IDCard.CardData.CardSubType = Enums.CardSubType.ResidencePermit;
 
             if (IdentityCardHelper.nations.ContainsKey(nationality.ToUpper()))
             {
@@ -97,7 +85,10 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                         gender = block.Substring(11, 1);
                         dateOfExpiry = block.Substring(12,6);
                         validationNumberDateOfExpiry = block.Substring(18,1);
-                        IDCard.PersonalData.PersonalNumber = block.Substring(19,10);
+                        if (block.Length != 19)
+                        {
+                            IDCard.PersonalData.PersonalNumber = block.Substring(19,10);
+                        }
                     }
 
                     //if (j == 3)
@@ -171,7 +162,8 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                     lineIndex++;
                     if (line.Length != 44)
                     {
-                        throw new WrongDataFormatException("It looks like some data missing :/");
+
+                        throw new WrongDataFormatException($"Number of chars on line {i + 1} is {line.Length} but it should be 44. It looks like some data missing :/");
                     }
 
                     switch (lineIndex)

@@ -2,7 +2,7 @@
   "profiles": {
     "IdentityCardInformationExtractor": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\test\\OP_CR_prednaStrana.jpg D:\\test\\OP_CR_zadnaStrana.jpg OP JSON"
+      "commandLineArgs": "P \"C:\\Users\\erik.hudcovsky\\OneDrive - Solarwinds\\BP materials\\strojovoCitatelnaOblastCP.png\" XML \"asdasdas\""
     }
   }
 }
