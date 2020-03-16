@@ -4,9 +4,8 @@ using System.Text;
 
 namespace IdentityCardInformationExtractor.Interfaces
 {
-    interface IProcess
+    interface IOcrProcess
     {
-        string Text { get; set; }        
         string Process(string dataPath,string userName,string password);
     }
 }

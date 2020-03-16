@@ -4,12 +4,12 @@ using IdentityCardInformationExtractor.Interfaces;
 
 namespace IdentityCardInformationExtractor
 {
-    class TessProcess : IProcess
+    class Tesseract4Process : IOcrProcess
     {
         public float MeanConfidence { get; set; }
         public string Text { get; set; }
 
-        public TessProcess() {}
+        public Tesseract4Process() {}
 
         public string Process(string dataPath,string userName = null,string password = null) 
         {

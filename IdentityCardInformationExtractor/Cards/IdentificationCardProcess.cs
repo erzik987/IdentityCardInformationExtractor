@@ -3,18 +3,34 @@ using IdentityCardInformationExtractor.Enums;
 using IdentityCardInformationExtractor.Exceptions;
 using IdentityCardInformationExtractor.Models;
 using IdentityCardInformationExtractor.Helpers;
+using IdentityCardInformationExtractor.Interfaces;
 
 namespace IdentityCardInformationExtractor.PapersOnProcess
 {
-    class IdentificationCardProcess
+    class IdentificationCardProcess : ICardDataProcess
     {
 
         public IdentityCard IDCard;
         public string Text { get; set; }
 
-        public IdentificationCardProcess(IdentityCard IDCard, string Text) {
-            this.IDCard = IDCard;
-            this.Text = Text;
+        public IdentificationCardProcess(string backPageDataPath, string frontPageDataPath) {
+
+            IDCard = new IdentityCard();
+
+            try
+            {
+                if (frontPageDataPath != null)
+                {
+                    IDCard.CardData.FrontSide = IdentityCardHelper.processFrontPage(frontPageDataPath);
+                }
+
+                IDCard.CardData.BackSide = IdentityCardHelper.processBackPage(backPageDataPath);
+                Text = IdentityCardHelper.getTextFromCard(backPageDataPath);
+            }
+            catch (PathToFileNotFoundException ex)
+            {
+                throw ex;
+            }
         }
 
         private void parseFirstLine(string line)
@@ -24,7 +40,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
 
             var country = "";
             var cardSubType = "";
-            var cardType = "";
             var cardCode = "";
             var identificationNumber = "";
 
@@ -39,7 +54,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                     {
                         country = block.Substring(2, 3);
                         cardSubType = block.Substring(1, 1);
-                        cardType = block.Substring(0, 1);
                         cardCode = block.Substring(5);
                     }
 
@@ -51,17 +65,8 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                 }
             }
 
-            //var cardTypeExist = Enum.IsDefined(typeof(CardType), cardType[0]);
-            if (true)
-            {
-                IDCard.CardData.CardType = (CardType)cardType[0];
-            }
-            else
-            {
-                throw new WrongDataFormatException("We couldn't load card type");
-            }
+            IDCard.CardData.CardType = CardType.IdentityCard;
 
-            //var cardSubTypeExist = Enum.IsDefined(typeof(CardSubType), cardSubType[0]);
             if (true)
             {
                 IDCard.CardData.CardSubType = (CardSubType)cardSubType[0];

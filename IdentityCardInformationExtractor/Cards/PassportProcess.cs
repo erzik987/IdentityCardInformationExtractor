@@ -1,6 +1,7 @@
 ﻿using IdentityCardInformationExtractor.Enums;
 using IdentityCardInformationExtractor.Exceptions;
 using IdentityCardInformationExtractor.Helpers;
+using IdentityCardInformationExtractor.Interfaces;
 using IdentityCardInformationExtractor.Models;
 using System;
 using System.Collections.Generic;
@@ -8,15 +9,24 @@ using System.Text;
 
 namespace IdentityCardInformationExtractor.PapersOnProcess
 {
-    class PassportProcess
+    class PassportProcess : ICardDataProcess
     {
         public IdentityCard IDCard;
         public string Text { get; set; }
 
-        public PassportProcess(IdentityCard IDCard, string Text)
+        public PassportProcess(string backPageDataPath)
         {
-            this.IDCard = IDCard;
-            this.Text = Text;
+            IDCard = new IdentityCard();
+
+            try
+            {
+                IDCard.CardData.BackSide = IdentityCardHelper.processBackPage(backPageDataPath);
+                Text = IdentityCardHelper.getTextFromCard(backPageDataPath);
+            }
+            catch (PathToFileNotFoundException ex)
+            {
+                throw ex;
+            }
         }
 
         private void parseFirstLine(string line) {
@@ -90,11 +100,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                             IDCard.PersonalData.PersonalNumber = block.Substring(19,10);
                         }
                     }
-
-                    //if (j == 3)
-                    //{
-                    //    IDCard.PersonalData.Surname = block;
-                    //}
                 }
             }
 

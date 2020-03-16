@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using IdentityCardInformationExtractor.Enums;
-
+using IdentityCardInformationExtractor.Exceptions;
+using IdentityCardInformationExtractor.Models;
 
 namespace IdentityCardInformationExtractor.Helpers
 {
@@ -124,6 +126,66 @@ namespace IdentityCardInformationExtractor.Helpers
             int day = Convert.ToInt32(stringDate.Substring(4, 2));
 
             return new DateTime(year, month, day);
+        }
+
+        public static Image processFrontPage(string dataPath)
+        {
+            Image frontPage;
+
+            if (dataPath != null)
+            {
+                try
+                {
+                    frontPage = Image.FromFile(dataPath);
+                }
+                catch (Exception)
+                {
+                    throw new PathToFileNotFoundException(dataPath);
+                }
+            }
+            else
+            {
+                throw new System.ArgumentNullException("Data path wasnt defined", "original");
+            }
+
+            return frontPage;
+        }
+
+        public static Image processBackPage(string dataPath)
+        {
+            Image backPage;
+
+            if (dataPath != null)
+            {
+                try
+                {
+                    backPage = Image.FromFile(dataPath);
+                }
+                catch (Exception)
+                {
+                    throw new PathToFileNotFoundException(dataPath);
+                }
+            }
+            else
+            {
+                throw new System.ArgumentNullException("Data path wasnt defined", "original");
+            }
+
+            return backPage;
+        }
+
+        public static string getTextFromCard(string dataPath) 
+        {
+            return new Tesseract4Process().Process(dataPath);
+        }
+
+
+
+        public static void Print(string Text)
+        {
+            Console.WriteLine();
+            Console.WriteLine(Text);
+            Console.WriteLine();
         }
     }
 }

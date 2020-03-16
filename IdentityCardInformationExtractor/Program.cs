@@ -9,6 +9,9 @@ using System.Linq;
 using System.Text;
 using IdentityCardInformationExtractor.Models;
 using IdentityCardInformationExtractor.Enums;
+using IdentityCardInformationExtractor.PapersOnProcess;
+using IdentityCardInformationExtractor.Helpers;
+using IdentityCardInformationExtractor.Interfaces;
 
 namespace IdentityCardInformationExtractor
 {
@@ -60,22 +63,23 @@ namespace IdentityCardInformationExtractor
 
         public static void process(string cardType, string backSidePath , string format = "JSON", string frontSidePath = null) 
         {
-            DataProcess data;
+            //DataProcess data;
 
             try
             {
                 switch (cardType)
                 {
                     case "IC":
-                        data = new DataProcess(Ocr.Tesseract, CardType.IdentityCard, backSidePath, frontSidePath);
-                        data.Print();
-                        Console.WriteLine(chooseOutput(format, data));
+                        var identificationCard = new IdentificationCardProcess(backSidePath,frontSidePath);
+                        IdentityCardHelper.Print(identificationCard.Text);
+                        Console.WriteLine(chooseOutput(format, identificationCard));
                         break;
 
                     case "P":
-                        data = new DataProcess(Ocr.Tesseract, CardType.Passport, backSidePath);
-                        data.Print();
-                        Console.WriteLine(chooseOutput(format, data));
+
+                        var passport = new PassportProcess(backSidePath);
+                        IdentityCardHelper.Print(passport.Text);
+                        Console.WriteLine(chooseOutput(format, passport));
                         break;
 
                     default:
@@ -92,7 +96,7 @@ namespace IdentityCardInformationExtractor
             //Console.ReadKey();
         }
 
-        public static string chooseOutput(string format,DataProcess data) 
+        public static string chooseOutput(string format, ICardDataProcess cardDataProcess) 
         {
             IdentityCard identityCard = new IdentityCard();
             string output = "";
@@ -100,15 +104,15 @@ namespace IdentityCardInformationExtractor
             switch (format)
             {
                 case "JSON":
-                    identityCard = data.getIdentityCard();
+                    identityCard = cardDataProcess.getIdentityCard();
                     output = identityCard.ToJson();
                     break;
                 case "XML":
-                    identityCard = data.getIdentityCard();
+                    identityCard = cardDataProcess.getIdentityCard();
                     output = identityCard.ToXml();
                     break;
                 default:
-                    identityCard = data.getIdentityCard();
+                    identityCard = cardDataProcess.getIdentityCard();
                     output = identityCard.ToJson();
                     break;
             }

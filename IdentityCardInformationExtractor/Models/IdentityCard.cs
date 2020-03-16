@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
+using IdentityCardInformationExtractor.PapersOnProcess;
 
 namespace IdentityCardInformationExtractor.Models
 {
@@ -19,6 +20,8 @@ namespace IdentityCardInformationExtractor.Models
         }
         public CardData CardData { get; set; }
         public PersonalData PersonalData { get; set; }
+
+        
 
         private Object getIdentityCardAsObject() 
         {
