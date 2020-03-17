@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using Tesseract;
 using IdentityCardInformationExtractor.Exceptions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using IdentityCardInformationExtractor.Models;
-using IdentityCardInformationExtractor.Enums;
 using IdentityCardInformationExtractor.PapersOnProcess;
 using IdentityCardInformationExtractor.Helpers;
 using IdentityCardInformationExtractor.Interfaces;
@@ -63,8 +55,6 @@ namespace IdentityCardInformationExtractor
 
         public static void process(string cardType, string backSidePath , string format = "JSON", string frontSidePath = null) 
         {
-            //DataProcess data;
-
             try
             {
                 switch (cardType)
@@ -93,31 +83,19 @@ namespace IdentityCardInformationExtractor
                 Console.ReadKey();
                 throw;
             }
-            //Console.ReadKey();
         }
 
         public static string chooseOutput(string format, ICardDataProcess cardDataProcess) 
         {
-            IdentityCard identityCard = new IdentityCard();
-            string output = "";
-
             switch (format)
             {
                 case "JSON":
-                    identityCard = cardDataProcess.getIdentityCard();
-                    output = identityCard.ToJson();
-                    break;
+                    return cardDataProcess.getIdentityCard().ToJson();
                 case "XML":
-                    identityCard = cardDataProcess.getIdentityCard();
-                    output = identityCard.ToXml();
-                    break;
+                    return cardDataProcess.getIdentityCard().ToXml();
                 default:
-                    identityCard = cardDataProcess.getIdentityCard();
-                    output = identityCard.ToJson();
-                    break;
+                    return cardDataProcess.getIdentityCard().ToJson();
             }
-
-            return output;
         }
     }
 }
