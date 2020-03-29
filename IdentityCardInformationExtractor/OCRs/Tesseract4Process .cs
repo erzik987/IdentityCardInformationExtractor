@@ -1,6 +1,7 @@
 ﻿using System;
 using Tesseract;
 using IdentityCardInformationExtractor.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace IdentityCardInformationExtractor
 {
@@ -15,7 +16,9 @@ namespace IdentityCardInformationExtractor
         {
             try
             {
-                using (var engine = new TesseractEngine(@"./tessdata", "ces", EngineMode.Default))
+                string regexPattern = @"(bin\\(Debug|Release)\\netcoreapp\d.\d)";
+                string pathToTrainedData = Regex.Replace(System.AppContext.BaseDirectory,regexPattern, "OCRs\\tessdata");
+                using (var engine = new TesseractEngine(pathToTrainedData, "ces", EngineMode.Default))
                 {
                     using (var img = Pix.LoadFromFile(dataPath))
                     {

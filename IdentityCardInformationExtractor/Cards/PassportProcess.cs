@@ -167,7 +167,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                     lineIndex++;
                     if (line.Length != 44)
                     {
-
                         throw new WrongDataFormatException($"Number of chars on line {i + 1} is {line.Length} but it should be 44. It looks like some data missing :/");
                     }
 
