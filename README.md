@@ -7,6 +7,9 @@
 * **Format** (optional, default is JSON) - (JSON|XML)
 * **Path to other side of ID card** (optional)
 
+## Nuget package
+
+https://www.nuget.org/packages/IdentityCardInformationExtractor/
 
 ## Authors
 
