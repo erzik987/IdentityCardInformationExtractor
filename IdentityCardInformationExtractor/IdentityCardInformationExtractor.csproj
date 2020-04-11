@@ -11,8 +11,9 @@
     <PackageTags>OCR Tesseract IDcards machine readable field</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.1</Version>
+    <Version>1.1.5</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageId>IdentityCardInformationExtractor</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,7 +36,12 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
 </ItemGroup>
 
-<ItemGroup>
-  <Folder Include="OCRs\tessdata\" />
-</ItemGroup>
+  <ItemGroup>
+    <!--<Content Include="contentFiles/any/any/tessdata/*">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/any/any/tessdata/*</PackagePath>
+    </Content>-->
+    <None Include="contentFiles/any/any/tessdata/*" Pack="true" PackagePath="contentFiles/any/any/tessdata/"/>
+  </ItemGroup>
+
 </Project>

@@ -12,12 +12,14 @@ namespace IdentityCardInformationExtractor
 
         public Tesseract4Process() {}
 
-        public string Process(string dataPath,string userName = null,string password = null) 
+        public string Process(string dataPath, string userName = null, string password = null)
         {
             try
             {
-                string regexPattern = @"(bin\\(Debug|Release)\\netcoreapp\d.\d)";
-                string pathToTrainedData = Regex.Replace(System.AppContext.BaseDirectory,regexPattern, "OCRs\\tessdata");
+                string regexPattern = @"(bin\\(Debug|Release)\\netcoreapp\d.\d\\)";
+
+                var pathToTrainedData = Regex.Replace(System.AppContext.BaseDirectory, regexPattern, "contentFiles\\any\\any\\tessdata");
+
                 using (var engine = new TesseractEngine(pathToTrainedData, "ces", EngineMode.Default))
                 {
                     using (var img = Pix.LoadFromFile(dataPath))
