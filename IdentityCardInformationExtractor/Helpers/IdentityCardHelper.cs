@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using IdentityCardInformationExtractor.Enums;
 using IdentityCardInformationExtractor.Exceptions;
-using IdentityCardInformationExtractor.Models;
 
 namespace IdentityCardInformationExtractor.Helpers
 {
@@ -71,7 +69,6 @@ namespace IdentityCardInformationExtractor.Helpers
             };
 
             return map[inputValue];
-
         }
 
         public static bool validate(string stringOnValidate, int? validationValue)
@@ -87,14 +84,17 @@ namespace IdentityCardInformationExtractor.Helpers
                         count = count + parseLetterToIntValue(letter) * 7;
                         index = 3;
                         break;
+
                     case 3:
                         count = count + parseLetterToIntValue(letter) * 3;
                         index = 1;
                         break;
+
                     case 1:
                         count = count + parseLetterToIntValue(letter) * 1;
                         index = 7;
                         break;
+
                     default:
                         break;
                 }
@@ -174,12 +174,10 @@ namespace IdentityCardInformationExtractor.Helpers
             return backPage;
         }
 
-        public static string getTextFromCard(string dataPath) 
+        public static string getTextFromCard(string dataPath)
         {
             return new Tesseract4Process().Process(dataPath);
         }
-
-
 
         public static void Print(string Text)
         {

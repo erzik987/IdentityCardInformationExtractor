@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace IdentityCardInformationExtractor.Enums
+﻿namespace IdentityCardInformationExtractor.Enums
 {
-
     /// <summary>
     /// https://gist.github.com/zspine/2365808
     /// </summary>
@@ -12,7 +7,7 @@ namespace IdentityCardInformationExtractor.Enums
     /// <summary>
     ///https://en.wikipedia.org/wiki/ISO_3166-1
     /// </summary>
-    /// 
+    ///
     public enum Nationality
     {
         Andorra = 53,

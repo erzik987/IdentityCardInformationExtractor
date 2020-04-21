@@ -1,7 +1,6 @@
 ﻿using System;
-using IdentityCardInformationExtractor.Enums;
 using System.Drawing;
-
+using IdentityCardInformationExtractor.Enums;
 
 namespace IdentityCardInformationExtractor.Models
 {
@@ -9,6 +8,7 @@ namespace IdentityCardInformationExtractor.Models
     {
         //Required
         public string GivenNames { get; set; }
+
         public string Surname { get; set; }
         public DateTime DateOfBirth { get; set; }
         public Sex Sex { get; set; }
@@ -17,8 +17,9 @@ namespace IdentityCardInformationExtractor.Models
 
         //Optional
         public Image Photo { get; set; }
+
         public Image Signature { get; set; }
-        public string  Address { get; set; }
+        public string Address { get; set; }
         public string PlaceOfBirth { get; set; }
         public string SpecialRemarks { get; set; }
     }

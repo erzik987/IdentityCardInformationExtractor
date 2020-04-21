@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace IdentityCardInformationExtractor
 {
-    class Program
+    internal class Program
     {
         public static void Main(string[] args)
         {
             if (args.Length == 0)
             {
-                var result = Extractor.process("P", "C:\\Users\\erik.hudcovsky\\OneDrive - Solarwinds\\BP materials\\strojovoCitatelnaOblastCP.png", "JSON");
+                var result = Extractor.print("IC", "C:\\Users\\erik.hudcovsky\\Downloads\\spracovanieOP_plnaKvalita_img-smaller.jpg");
+
                 Console.WriteLine(result);
                 Console.ReadLine();
             }

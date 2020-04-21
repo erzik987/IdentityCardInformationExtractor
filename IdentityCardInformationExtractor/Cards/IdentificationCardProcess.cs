@@ -1,20 +1,19 @@
 ﻿using System;
 using IdentityCardInformationExtractor.Enums;
 using IdentityCardInformationExtractor.Exceptions;
-using IdentityCardInformationExtractor.Models;
 using IdentityCardInformationExtractor.Helpers;
 using IdentityCardInformationExtractor.Interfaces;
+using IdentityCardInformationExtractor.Models;
 
 namespace IdentityCardInformationExtractor.PapersOnProcess
 {
-    class IdentificationCardProcess : ICardDataProcess
+    internal class IdentificationCardProcess : ICardDataProcess
     {
-
         public IdentityCard IDCard;
         public string Text { get; set; }
 
-        public IdentificationCardProcess(string backPageDataPath, string frontPageDataPath) {
-
+        public IdentificationCardProcess(string backPageDataPath, string frontPageDataPath)
+        {
             IDCard = new IdentityCard();
 
             try
@@ -112,8 +111,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
             {
                 IDCard.PersonalData.PersonalNumber = identificationNumber;
             }
-
-
         }
 
         private void parseSecondLine(string line)
@@ -141,7 +138,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                         country = block.Substring(15, 3);
                         validationValueForDateOfBirth = block[6] - '0';
                         validaitonValueForDateOfExpiry = block[14] - '0';
-
                     }
                 }
             }
@@ -224,18 +220,26 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                         case 1:
                             parseFirstLine(line);
                             break;
+
                         case 2:
                             parseSecondLine(line);
                             break;
+
                         case 3:
                             parseThirdLine(line);
                             break;
+
                         default:
                             throw new WrongDataFormatException("Error occured while trying to parse identity card data");
                     }
                 }
             }
             return IDCard;
+        }
+
+        public string print()
+        {
+            return Text;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using IdentityCardInformationExtractor.Exceptions;
-using IdentityCardInformationExtractor.PapersOnProcess;
 using IdentityCardInformationExtractor.Interfaces;
-using System;
+using IdentityCardInformationExtractor.PapersOnProcess;
 
 namespace IdentityCardInformationExtractor
 {
@@ -10,7 +9,7 @@ namespace IdentityCardInformationExtractor
         ///<sumary>
         /// Process the given image with aditional information
         ///</sumary>
-        ///<param name="cardType"> 
+        ///<param name="cardType">
         /// Card type (required) - (IC|P). Defines which type of card will be processed.
         ///</param>
         ///<param name="backSidePath">
@@ -22,14 +21,14 @@ namespace IdentityCardInformationExtractor
         ///<param name="frontSidePath">
         /// Path to other side of ID card (optional)
         ///</param>
-        public static string process(string cardType, string backSidePath , string format = "JSON", string frontSidePath = null) 
+        public static string process(string cardType, string backSidePath, string format = "JSON", string frontSidePath = null)
         {
             try
             {
                 switch (cardType)
                 {
                     case "IC":
-                        var identificationCard = new IdentificationCardProcess(backSidePath,frontSidePath);
+                        var identificationCard = new IdentificationCardProcess(backSidePath, frontSidePath);
                         return chooseOutput(format, identificationCard);
 
                     case "P":
@@ -46,16 +45,40 @@ namespace IdentityCardInformationExtractor
             }
         }
 
-        private static string chooseOutput(string format, ICardDataProcess cardDataProcess) 
+        private static string chooseOutput(string format, ICardDataProcess cardDataProcess)
         {
             switch (format)
             {
                 case "JSON":
                     return cardDataProcess.getIdentityCard().ToJson();
+
                 case "XML":
                     return cardDataProcess.getIdentityCard().ToXml();
+
                 default:
                     return cardDataProcess.getIdentityCard().ToJson();
+            }
+        }
+
+        public static string print(string cardType, string backSidePath)
+        {
+            try
+            {
+                switch (cardType)
+                {
+                    case "IC":
+                        return new IdentificationCardProcess(backSidePath, null).print();
+
+                    case "P":
+                        return new PassportProcess(backSidePath).print();
+
+                    default:
+                        return "Card type was not recognized";
+                }
+            }
+            catch (PathToFileNotFoundException ex)
+            {
+                throw ex;
             }
         }
     }

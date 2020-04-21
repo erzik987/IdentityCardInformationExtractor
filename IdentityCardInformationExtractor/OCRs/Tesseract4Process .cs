@@ -1,26 +1,23 @@
 ﻿using System;
-using Tesseract;
 using IdentityCardInformationExtractor.Interfaces;
-using System.Text.RegularExpressions;
+using Tesseract;
 
 namespace IdentityCardInformationExtractor
 {
-    class Tesseract4Process : IOcrProcess
+    internal class Tesseract4Process : IOcrProcess
     {
         public float MeanConfidence { get; set; }
         public string Text { get; set; }
 
-        public Tesseract4Process() {}
+        public Tesseract4Process()
+        {
+        }
 
         public string Process(string dataPath, string userName = null, string password = null)
         {
             try
             {
-                string regexPattern = @"(bin\\(Debug|Release)\\netcoreapp\d.\d\\)";
-
-                var pathToTrainedData = Regex.Replace(System.AppContext.BaseDirectory, regexPattern, "contentFiles\\any\\any\\tessdata");
-
-                using (var engine = new TesseractEngine(pathToTrainedData, "ces", EngineMode.Default))
+                using (var engine = new TesseractEngine("", "ces", EngineMode.Default))
                 {
                     using (var img = Pix.LoadFromFile(dataPath))
                     {

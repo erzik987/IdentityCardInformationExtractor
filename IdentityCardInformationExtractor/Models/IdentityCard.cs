@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using IdentityCardInformationExtractor.Enums;
-using Newtonsoft.Json;
-using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
-using IdentityCardInformationExtractor.PapersOnProcess;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace IdentityCardInformationExtractor.Models
 {
@@ -18,12 +13,11 @@ namespace IdentityCardInformationExtractor.Models
             CardData = new CardData();
             PersonalData = new PersonalData();
         }
+
         public CardData CardData { get; set; }
         public PersonalData PersonalData { get; set; }
 
-        
-
-        private Object getIdentityCardAsObject() 
+        private Object getIdentityCardAsObject()
         {
             var obj = new IdentityCard
             {
@@ -53,6 +47,7 @@ namespace IdentityCardInformationExtractor.Models
 
             return obj;
         }
+
         public string ToJson()
         {
             var obj = getIdentityCardAsObject();
@@ -62,7 +57,7 @@ namespace IdentityCardInformationExtractor.Models
             return json;
         }
 
-        public string ToXml() 
+        public string ToXml()
         {
             XmlSerializer xsSubmit = new XmlSerializer(typeof(IdentityCard));
             var subReq = getIdentityCardAsObject();

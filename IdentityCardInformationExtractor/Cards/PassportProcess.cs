@@ -1,15 +1,12 @@
-﻿using IdentityCardInformationExtractor.Enums;
+﻿using System;
 using IdentityCardInformationExtractor.Exceptions;
 using IdentityCardInformationExtractor.Helpers;
 using IdentityCardInformationExtractor.Interfaces;
 using IdentityCardInformationExtractor.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace IdentityCardInformationExtractor.PapersOnProcess
 {
-    class PassportProcess : ICardDataProcess
+    internal class PassportProcess : ICardDataProcess
     {
         public IdentityCard IDCard;
         public string Text { get; set; }
@@ -29,7 +26,8 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
             }
         }
 
-        private void parseFirstLine(string line) {
+        private void parseFirstLine(string line)
+        {
             string nationality = "";
 
             var blocks = line.Split("<");
@@ -51,7 +49,6 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                 }
             }
 
-
             IDCard.CardData.CardType = Enums.CardType.Passport;
             IDCard.CardData.CardSubType = Enums.CardSubType.ResidencePermit;
 
@@ -65,7 +62,8 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
             }
         }
 
-        private void parseSecondLine(string line) {
+        private void parseSecondLine(string line)
+        {
             string cardCode = "";
             string validationNumberForCardCode = "";
             string cardOrigin = "";
@@ -93,11 +91,11 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                         dateOfBirth = block.Substring(4, 6);
                         validationNumberDateOfBirth = block.Substring(10, 1);
                         gender = block.Substring(11, 1);
-                        dateOfExpiry = block.Substring(12,6);
-                        validationNumberDateOfExpiry = block.Substring(18,1);
+                        dateOfExpiry = block.Substring(12, 6);
+                        validationNumberDateOfExpiry = block.Substring(18, 1);
                         if (block.Length != 19)
                         {
-                            IDCard.PersonalData.PersonalNumber = block.Substring(19,10);
+                            IDCard.PersonalData.PersonalNumber = block.Substring(19, 10);
                         }
                     }
                 }
@@ -156,7 +154,8 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
             }
         }
 
-        public IdentityCard getIdentityCard() {
+        public IdentityCard getIdentityCard()
+        {
             var lineIndex = 0;
             var lines = Text.Split("\n");
             for (int i = 0; i < lines.Length; i++)
@@ -175,15 +174,22 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
                         case 1:
                             parseFirstLine(line);
                             break;
+
                         case 2:
                             parseSecondLine(line);
                             break;
+
                         default:
                             throw new WrongDataFormatException("Error occured while trying to parse identity card data");
                     }
                 }
             }
             return IDCard;
+        }
+
+        public string print()
+        {
+            return Text;
         }
     }
 }

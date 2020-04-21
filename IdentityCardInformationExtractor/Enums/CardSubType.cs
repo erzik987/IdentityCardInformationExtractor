@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace IdentityCardInformationExtractor.Enums
+﻿namespace IdentityCardInformationExtractor.Enums
 {
     public enum CardSubType
     {
