@@ -11,14 +11,13 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
         public IdentityCard IDCard;
         public string Text { get; set; }
 
-        public PassportProcess(string backPageDataPath)
+        public PassportProcess(string backPageDataPath, IOcrProcess ocr)
         {
             IDCard = new IdentityCard();
 
             try
             {
-                IDCard.CardData.BackSide = IdentityCardHelper.processBackPage(backPageDataPath);
-                Text = IdentityCardHelper.getTextFromCard(backPageDataPath);
+                Text = ProcessCard(ocr, backPageDataPath);
             }
             catch (PathToFileNotFoundException ex)
             {
@@ -190,6 +189,13 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
         public string print()
         {
             return Text;
+        }
+
+        public string ProcessCard(IOcrProcess ocr, string backPageDataPath, string frontPageDataPath = null)
+        {
+            IDCard.CardData.BackSide = IdentityCardHelper.processCardImage(backPageDataPath);
+
+            return ocr.Process(backPageDataPath);
         }
     }
 }

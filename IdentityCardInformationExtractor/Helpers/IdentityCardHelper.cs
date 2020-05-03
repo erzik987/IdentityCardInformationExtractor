@@ -128,30 +128,7 @@ namespace IdentityCardInformationExtractor.Helpers
             return new DateTime(year, month, day);
         }
 
-        public static Image processFrontPage(string dataPath)
-        {
-            Image frontPage;
-
-            if (dataPath != null)
-            {
-                try
-                {
-                    frontPage = Image.FromFile(dataPath);
-                }
-                catch (Exception)
-                {
-                    throw new PathToFileNotFoundException(dataPath);
-                }
-            }
-            else
-            {
-                throw new System.ArgumentNullException("Data path wasnt defined", "original");
-            }
-
-            return frontPage;
-        }
-
-        public static Image processBackPage(string dataPath)
+        public static Image processCardImage(string dataPath)
         {
             Image backPage;
 
@@ -172,18 +149,6 @@ namespace IdentityCardInformationExtractor.Helpers
             }
 
             return backPage;
-        }
-
-        public static string getTextFromCard(string dataPath)
-        {
-            return new Tesseract4Process().Process(dataPath);
-        }
-
-        public static void Print(string Text)
-        {
-            Console.WriteLine();
-            Console.WriteLine(Text);
-            Console.WriteLine();
         }
     }
 }

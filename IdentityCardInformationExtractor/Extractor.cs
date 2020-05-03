@@ -25,14 +25,16 @@ namespace IdentityCardInformationExtractor
         {
             try
             {
+                var ocr = new Tesseract4Process();
+
                 switch (cardType)
                 {
                     case "IC":
-                        var identificationCard = new IdentificationCardProcess(backSidePath, frontSidePath);
+                        var identificationCard = new IdentificationCardProcess(backSidePath, frontSidePath, ocr);
                         return chooseOutput(format, identificationCard);
 
                     case "P":
-                        var passport = new PassportProcess(backSidePath);
+                        var passport = new PassportProcess(backSidePath,ocr);
                         return chooseOutput(format, passport);
 
                     default:
@@ -60,20 +62,29 @@ namespace IdentityCardInformationExtractor
             }
         }
 
-        public static string print(string cardType, string backSidePath)
+        public static string print(string cardType, string backSidePath, bool printRaw)
         {
             try
             {
-                switch (cardType)
+                var ocr = new Tesseract4Process();
+
+                if (printRaw)
                 {
-                    case "IC":
-                        return new IdentificationCardProcess(backSidePath, null).print();
+                    return ocr.Process(backSidePath);
+                }
+                else
+                {
+                    switch (cardType)
+                    {
+                        case "IC":
+                            return new IdentificationCardProcess(backSidePath, null, ocr).print();
 
-                    case "P":
-                        return new PassportProcess(backSidePath).print();
+                        case "P":
+                            return new PassportProcess(backSidePath, ocr).print();
 
-                    default:
-                        return "Card type was not recognized";
+                        default:
+                            return "Card type was not recognized";
+                    }
                 }
             }
             catch (PathToFileNotFoundException ex)

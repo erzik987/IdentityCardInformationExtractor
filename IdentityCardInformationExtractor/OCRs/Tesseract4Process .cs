@@ -8,12 +8,17 @@ namespace IdentityCardInformationExtractor
     {
         public float MeanConfidence { get; set; }
         public string Text { get; set; }
+        private string userName { get; set; }
+        private string password { get; set; }
 
-        public Tesseract4Process()
+
+        public Tesseract4Process(string userName = null, string password = null)
         {
+            this.userName = userName;
+            this.password = password;
         }
 
-        public string Process(string dataPath, string userName = null, string password = null)
+        public string Process(string dataPath)
         {
             try
             {

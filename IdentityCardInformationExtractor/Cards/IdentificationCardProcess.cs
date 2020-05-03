@@ -12,19 +12,13 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
         public IdentityCard IDCard;
         public string Text { get; set; }
 
-        public IdentificationCardProcess(string backPageDataPath, string frontPageDataPath)
+        public IdentificationCardProcess(string backPageDataPath, string frontPageDataPath, IOcrProcess ocr)
         {
             IDCard = new IdentityCard();
 
             try
             {
-                if (frontPageDataPath != null)
-                {
-                    IDCard.CardData.FrontSide = IdentityCardHelper.processFrontPage(frontPageDataPath);
-                }
-
-                IDCard.CardData.BackSide = IdentityCardHelper.processBackPage(backPageDataPath);
-                Text = IdentityCardHelper.getTextFromCard(backPageDataPath);
+                Text = ProcessCard(ocr, backPageDataPath, frontPageDataPath);
             }
             catch (PathToFileNotFoundException ex)
             {
@@ -240,6 +234,18 @@ namespace IdentityCardInformationExtractor.PapersOnProcess
         public string print()
         {
             return Text;
+        }
+
+        public string ProcessCard(IOcrProcess ocr, string backPageDataPath, string frontPageDataPath = null)
+        {
+            if (frontPageDataPath != null)
+            {
+                IDCard.CardData.FrontSide = IdentityCardHelper.processCardImage(frontPageDataPath);
+            }
+
+            IDCard.CardData.BackSide = IdentityCardHelper.processCardImage(backPageDataPath);
+
+            return ocr.Process(backPageDataPath);
         }
     }
 }

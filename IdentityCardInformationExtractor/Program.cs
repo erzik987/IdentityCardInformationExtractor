@@ -8,7 +8,7 @@ namespace IdentityCardInformationExtractor
         {
             if (args.Length == 0)
             {
-                var result = Extractor.print("IC", "C:\\Users\\erik.hudcovsky\\Downloads\\spracovanieOP_plnaKvalita_img-smaller.jpg");
+                var result = Extractor.process("IC", "C:\\Users\\erik.hudcovsky\\OneDrive - Solarwinds\\BP materials\\spracovanieOP_plnaKvalita_img.jpg");
 
                 Console.WriteLine(result);
                 Console.ReadLine();

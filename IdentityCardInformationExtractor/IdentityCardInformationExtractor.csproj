@@ -11,7 +11,7 @@
     <PackageTags>OCR Tesseract IDcards machine readable field</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.1.8</Version>
+    <Version>1.2.8</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>IdentityCardInformationExtractor</PackageId>
     <TessdataFile>tessdata/ces.traineddata</TessdataFile>
@@ -46,5 +46,17 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="contentFiles/**/*.*" copyToOutput="true">
+      <PackagePath>contentFiles\any\any;content</PackagePath>
+      <IncludeInPackage>true</IncludeInPackage>
+      <CopyToOutput>true</CopyToOutput>
+      <BuildAction>Content</BuildAction>
+      <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 
 </Project>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<package >
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>IdentityCardInformationExtractor</id>
-    <version>1.1.9</version>
+    <version>1.2.5</version>
     <title>IdentityCardInformationExtractor</title>
     <authors>Erik Hudcovský</authors>
     <owners>Erik</owners>
@@ -22,8 +22,6 @@
       <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
       <dependency id="Superpower" version="2.3.0" />
     </dependencies>
-    <contentFiles>
-      <files include="any/any/*.traineddata" buildAction="none" copyToOutput="true"/>
-    </contentFiles>
   </metadata>
 </package>
+
