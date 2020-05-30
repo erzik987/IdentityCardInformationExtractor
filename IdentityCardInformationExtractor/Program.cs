@@ -6,14 +6,6 @@ namespace IdentityCardInformationExtractor
     {
         public static void Main(string[] args)
         {
-            if (args.Length == 0)
-            {
-                var result = Extractor.process("IC", "C:\\Users\\erik.hudcovsky\\OneDrive - Solarwinds\\BP materials\\spracovanieOP_plnaKvalita_img.jpg");
-
-                Console.WriteLine(result);
-                Console.ReadLine();
-            }
-
             if (args.Length < 2)
             {
                 Console.WriteLine("you have to pass atleast two parameters, check documentation for closer info");

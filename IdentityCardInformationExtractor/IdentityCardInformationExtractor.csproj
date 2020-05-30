@@ -11,7 +11,7 @@
     <PackageTags>OCR Tesseract IDcards machine readable field</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.2.8</Version>
+    <Version>1.2.9</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>IdentityCardInformationExtractor</PackageId>
     <TessdataFile>tessdata/ces.traineddata</TessdataFile>

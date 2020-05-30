@@ -21,7 +21,7 @@ namespace IdentityCardInformationExtractor
         ///<param name="frontSidePath">
         /// Path to other side of ID card (optional)
         ///</param>
-        public static string process(string cardType, string backSidePath, string format = "JSON", string frontSidePath = null)
+        public static string Process(string cardType, string backSidePath, string format = "JSON", string frontSidePath = null)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace IdentityCardInformationExtractor
             }
         }
 
-        public static string print(string cardType, string backSidePath, bool printRaw)
+        public static string Print(string cardType, string backSidePath, bool printRaw)
         {
             try
             {
