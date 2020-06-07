@@ -16,7 +16,7 @@ namespace IdentityCardInformationExtractor
             {
                 var backsidepath = args[1];
                 var cardtype = args[0];
-                Extractor.process(cardtype, backsidepath);
+                Extractor.Process(cardtype, backsidepath);
             }
 
             if (args.Length == 3)
@@ -25,7 +25,7 @@ namespace IdentityCardInformationExtractor
                 var cardtype = args[0];
                 var format = args[2];
 
-                Extractor.process(cardtype, backsidepath, format);
+                Extractor.Process(cardtype, backsidepath, format);
             }
 
             if (args.Length == 4)
@@ -40,7 +40,7 @@ namespace IdentityCardInformationExtractor
                     Console.WriteLine("the last parameter wasn't proceed because is not needed.");
                 }
 
-                Extractor.process(cardtype, backsidepath, format, frontsidepath);
+                Extractor.Process(cardtype, backsidepath, format, frontsidepath);
             }
         }
     }
